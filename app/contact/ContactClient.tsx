@@ -168,22 +168,23 @@ export default function ContactClient() {
     lastSubmitAtRef.current = now
     setIsSubmitting(true)
     const genericSubmitError = 'Unable to submit your enquiry right now.'
+    const { name, email, message } = formValues
 
     try {
-      const response = await fetch('/api/enquiry', {
-        method: 'POST',
+      const response = await fetch("/api/enquiry", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          name: formValues.name,
-          email: formValues.email,
+          name,
+          email,
+          message,
           studio: formValues.studio,
           projectType: formValues.projectType,
           estimatedBudget: formValues.estimatedBudget,
           timeline: formValues.timeline,
           website: formValues.website,
-          message: formValues.message,
           consent: formValues.consent,
           companyWebsite: formValues.companyWebsite,
           growthLab: labContext
@@ -277,7 +278,7 @@ export default function ContactClient() {
           )}
         </div>
 
-        <form className="contact-form" onSubmit={handleSubmit} noValidate>
+        <form className="contact-form" method="post" onSubmit={handleSubmit} noValidate>
           <div>
             <label htmlFor="name" className="form-label">Full name</label>
             <input
