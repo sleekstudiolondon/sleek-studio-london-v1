@@ -11,13 +11,15 @@ export default function HomepageClient() {
   const [revealKeys, setRevealKeys] = useState<string[]>([])
   // Subtle parallax offset for hero accents (interactive animation).
   const [scrollY, setScrollY] = useState(0)
+  const heroImage =
+    'https://images.unsplash.com/photo-1615874959472-7a8a6a3d3b9f?auto=format&fit=crop&w=2200&q=75&fm=webp'
 
   // Gallery data: dynamic loop renders every image (no hardcoded <img> tags).
   const gallery = useMemo(() => [
-    { title: 'Minimalist Kitchen', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80' },
-    { title: 'Luxury Bedroom Suite', url: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=80' },
-    { title: 'Elegant Workspace', url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80' },
-    { title: 'Boutique Hotel Suite', url: 'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1600&q=80' }
+    { title: 'Minimalist Kitchen', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=75&fm=webp' },
+    { title: 'Luxury Bedroom Suite', url: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=75&fm=webp' },
+    { title: 'Elegant Workspace', url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=75&fm=webp' },
+    { title: 'Boutique Hotel Suite', url: 'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1600&q=75&fm=webp' }
   ], [])
 
   // Scroll-triggered section reveals using IntersectionObserver (animation feature).
@@ -86,6 +88,14 @@ export default function HomepageClient() {
           if (el && !sectionsRef.current.includes(el)) sectionsRef.current.push(el)
         }}
       >
+        <Image
+          src={heroImage}
+          alt="Elegant interior with warm lighting and luxury finishes"
+          fill
+          priority
+          sizes="100vw"
+          className="hero-bg-image"
+        />
         {/* Decorative elements and soft gradients to add depth (design choice). */}
         <div
           className="decorative-orb decor-orb-top parallax-layer"
@@ -210,8 +220,8 @@ export default function HomepageClient() {
                   height={1500}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
-                <figcaption className="image-title">{item.title}</figcaption>
               </button>
+              <figcaption className="image-title">{item.title}</figcaption>
             </figure>
           ))}
         </div>

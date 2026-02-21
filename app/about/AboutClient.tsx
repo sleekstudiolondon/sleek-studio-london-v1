@@ -9,42 +9,42 @@ const team = [
     role: 'Creative Director',
     bio: 'Leads editorial storytelling and brand refinement for luxury studios.',
     image:
-      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=75&fm=webp'
   },
   {
     name: 'Marcus Chen',
     role: 'Digital Experience Lead',
     bio: 'Crafts serene, high-converting web experiences and refined UI systems.',
     image:
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=75&fm=webp'
   },
   {
     name: 'Isabelle Knight',
     role: 'Strategy & Partnerships',
     bio: 'Shapes positioning, pricing, and client acquisition with calm precision.',
     image:
-      'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?auto=format&fit=crop&w=1200&q=75&fm=webp'
   },
   {
     name: 'Ravi Patel',
     role: 'Brand Designer',
     bio: 'Builds visual identities grounded in muted palettes and tactile detail.',
     image:
-      'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=1200&q=75&fm=webp'
   },
   {
     name: 'Solvia Alvarez',
     role: 'Content Director',
     bio: 'Curates imagery and copy that feel calm, luxurious, and editorial.',
     image:
-      'https://images.unsplash.com/photo-1525134479668-1bee5c7c6845?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1525134479668-1bee5c7c6845?auto=format&fit=crop&w=1200&q=75&fm=webp'
   },
   {
     name: 'Noah Gallagher',
     role: 'Client Experience',
     bio: 'Guides studio partners through launches with precision and care.',
     image:
-      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=75&fm=webp'
   }
 ]
 
@@ -184,6 +184,8 @@ export default function AboutPage() {
                 width={1200}
                 height={1400}
                 className="team-photo"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                loading="lazy"
               />
               <div className="p-4">
                 <h3 className="font-serif text-xl">{member.name}</h3>

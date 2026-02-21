@@ -78,9 +78,38 @@ const packages = [
   }
 ]
 
+const timeframeMarks = [3, 6, 9, 12]
+
 export default function ServicesPage() {
   const [activeServices, setActiveServices] = useState<string[]>(['website', 'positioning'])
   const [timeframe, setTimeframe] = useState(6)
+
+  const toggleService = (serviceId: string) => {
+    setActiveServices(prev =>
+      prev.includes(serviceId)
+        ? prev.filter(item => item !== serviceId)
+        : [...prev, serviceId]
+    )
+  }
+
+  const handleToggleKeys = (event: React.KeyboardEvent<HTMLButtonElement>, serviceId: string) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      toggleService(serviceId)
+    }
+  }
+
+  const handleSliderKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    let nextValue = timeframe
+    if (event.key === 'ArrowRight' || event.key === 'ArrowUp') nextValue = Math.min(12, timeframe + 1)
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') nextValue = Math.max(3, timeframe - 1)
+    if (event.key === 'Home') nextValue = 3
+    if (event.key === 'End') nextValue = 12
+    if (nextValue !== timeframe) {
+      event.preventDefault()
+      setTimeframe(nextValue)
+    }
+  }
 
   const timeframeSummary = useMemo(() => {
     const emphasis = timeframe <= 4
@@ -180,6 +209,7 @@ export default function ServicesPage() {
       ? 'Services complement each other when brand clarity, conversion, and visibility are aligned.'
       : 'A tailored mix will improve positioning and lead quality.'
     return {
+      selected,
       names,
       statement,
       recommendedFor,
@@ -257,7 +287,7 @@ export default function ServicesPage() {
             Build your service mix.
           </h2>
           <p className="text-neutral-600">
-            Toggle services to preview outcomes and the ideal use case for your studio.
+            Select one or more services, then drag the timeframe slider to see how recommendations change.
           </p>
           <div className="service-summary">
             <p className="text-sm text-neutral-600">{summary.statement}</p>
@@ -286,55 +316,91 @@ export default function ServicesPage() {
               <p className="text-sm text-neutral-500">{summary.reasoning}</p>
             </div>
           </div>
-          <label className="sim-label mt-6">
-            Target timeframe: {timeframe} months
-            <input
-              className="sim-range lux-range"
-              type="range"
-              min={3}
-              max={12}
-              step={1}
-              value={timeframe}
-              onChange={event => setTimeframe(Number(event.target.value))}
-            />
-            <div className="timeframe-summary">
-              <div>
-                <p className="sim-metric-title">Recommended strategy emphasis</p>
-                <p className="text-sm text-neutral-600">{timeframeSummary.emphasis}</p>
-              </div>
-              <div>
-                <p className="sim-metric-title">Expected short-term focus</p>
-                <p className="text-sm text-neutral-600">{timeframeSummary.shortTermFocus}</p>
-              </div>
-              <div>
-                <p className="sim-metric-title">Long-term positioning impact</p>
-                <p className="text-sm text-neutral-600">{timeframeSummary.longTermImpact}</p>
-              </div>
-              <div>
-                <p className="sim-metric-title">Momentum outlook</p>
-                <p className="text-sm text-neutral-600">{timeframeSummary.momentum}</p>
-                <p className="text-sm text-neutral-600 mt-2">{timeframeSummary.pacing}</p>
-                <p className="text-sm text-neutral-600 mt-2">{timeframeSummary.firstImprovement}</p>
-                <p className="text-sm text-neutral-600 mt-2">{timeframeSummary.compounding}</p>
-              </div>
+
+          <div className="mt-6">
+            <p id="planner-service-help" className="text-sm text-neutral-600 mb-3">
+              Choose services below. Selected options are highlighted.
+            </p>
+            <div className="planner-pill-row" aria-describedby="planner-service-help">
+              {services.map(service => {
+                const isActive = activeServices.includes(service.id)
+                return (
+                  <button
+                    key={service.id}
+                    type="button"
+                    className={`service-pill ${isActive ? 'is-active' : ''}`}
+                    onClick={() => toggleService(service.id)}
+                    onKeyDown={event => handleToggleKeys(event, service.id)}
+                    role="button"
+                    aria-pressed={isActive}
+                    aria-label={`${isActive ? 'Deselect' : 'Select'} ${service.title}`}
+                  >
+                    {service.title}
+                  </button>
+                )
+              })}
             </div>
+          </div>
+
+          <label htmlFor="timeframe" className="sim-label mt-6">
+            Target timeframe: {timeframe} months
           </label>
+          <p id="timeframe-help" className="text-sm text-neutral-600 mb-2">
+            Drag the slider or use Left/Right arrow keys to adjust timeline.
+          </p>
+          <input
+            id="timeframe"
+            className="sim-range lux-range"
+            type="range"
+            min={3}
+            max={12}
+            step={1}
+            value={timeframe}
+            onChange={event => setTimeframe(Number(event.target.value))}
+            onKeyDown={handleSliderKeys}
+            aria-label="Target timeframe in months"
+            aria-describedby="timeframe-help timeframe-marks"
+          />
+          <div id="timeframe-marks" className="slider-ticks" aria-hidden="true">
+            {timeframeMarks.map(mark => (
+              <span key={mark}>{mark}m</span>
+            ))}
+          </div>
+          <div className="timeframe-summary">
+            <div>
+              <p className="sim-metric-title">Recommended strategy emphasis</p>
+              <p className="text-sm text-neutral-600">{timeframeSummary.emphasis}</p>
+            </div>
+            <div>
+              <p className="sim-metric-title">Expected short-term focus</p>
+              <p className="text-sm text-neutral-600">{timeframeSummary.shortTermFocus}</p>
+            </div>
+            <div>
+              <p className="sim-metric-title">Long-term positioning impact</p>
+              <p className="text-sm text-neutral-600">{timeframeSummary.longTermImpact}</p>
+            </div>
+            <div>
+              <p className="sim-metric-title">Momentum outlook</p>
+              <p className="text-sm text-neutral-600">{timeframeSummary.momentum}</p>
+              <p className="text-sm text-neutral-600 mt-2">{timeframeSummary.pacing}</p>
+              <p className="text-sm text-neutral-600 mt-2">{timeframeSummary.firstImprovement}</p>
+              <p className="text-sm text-neutral-600 mt-2">{timeframeSummary.compounding}</p>
+            </div>
+          </div>
         </div>
 
         <div className="service-toggle-grid">
-          {services.map(service => (
-            <button
-              key={service.id}
-              type="button"
-              className={`service-toggle ${activeServices.includes(service.id) ? 'is-active' : ''}`}
-              onClick={() =>
-                setActiveServices(prev =>
-                  prev.includes(service.id)
-                    ? prev.filter(item => item !== service.id)
-                    : [...prev, service.id]
-                )
-              }
-            >
+          {summary.selected.length === 0 && (
+            <div className="service-toggle">
+              <p className="sim-metric-title">No services selected yet</p>
+              <p className="text-sm text-neutral-600 mt-2">
+                Select a service pill to preview deliverables and outcomes.
+              </p>
+            </div>
+          )}
+          {summary.selected.map(service => (
+            <article key={service.id} className="service-toggle is-active">
+              <p className="sim-metric-title">Selected service</p>
               <h3 className="font-serif text-xl">{service.title}</h3>
               <p className="text-sm text-neutral-600 mt-2">{service.summary}</p>
               <p className="text-sm text-neutral-500 mt-2">{service.outcome}</p>
@@ -346,7 +412,7 @@ export default function ServicesPage() {
                   ))}
                 </ul>
               </div>
-            </button>
+            </article>
           ))}
         </div>
       </section>
@@ -366,10 +432,12 @@ export default function ServicesPage() {
       <section className="mt-20 section-grid">
         <div className="service-image">
           <Image
-            src="https://images.unsplash.com/photo-1501045661006-fcebe0257c3f?auto=format&fit=crop&w=1600&q=80"
+            src="https://images.unsplash.com/photo-1501045661006-fcebe0257c3f?auto=format&fit=crop&w=1600&q=75&fm=webp"
             alt="Luxury interior with warm neutrals and soft light"
             width={1400}
             height={1000}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            loading="lazy"
           />
         </div>
         <div>
@@ -420,3 +488,4 @@ export default function ServicesPage() {
     </main>
   )
 }
+

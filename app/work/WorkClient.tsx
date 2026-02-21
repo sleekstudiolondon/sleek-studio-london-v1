@@ -1,70 +1,10 @@
 ﻿'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
-
-const projects = [
-  {
-    id: 'mayfair',
-    title: 'Mayfair Townhouse',
-    location: 'London',
-    focus: 'Residential',
-    year: '2025',
-    summary: 'A layered, warm-neutral narrative with bespoke walnut joinery.',
-    challenge: 'Reposition a heritage studio for a younger, design-forward clientele.',
-    strategy: 'Premium positioning + editorial storytelling',
-    impact: '38% increase in private enquiries within 6 months.',
-    businessImpact: 'Shortlisted by two new international developers.',
-    image:
-      'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1800&q=80'
-  },
-  {
-    id: 'riverside',
-    title: 'Riverside Penthouse',
-    location: 'Chelsea',
-    focus: 'Residential',
-    year: '2024',
-    summary: 'Muted teal accents and sculptural lighting across open-plan living.',
-    challenge: 'Increase qualified leads while maintaining a private, low-volume brand feel.',
-    strategy: 'Website conversion lift + social authority',
-    impact: '2.1x website engagement after launch.',
-    businessImpact: 'Improved enquiry-to-consultation ratio by 30%.',
-    image:
-      'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1800&q=80'
-  },
-  {
-    id: 'atelier',
-    title: 'Atelier South',
-    location: 'Soho',
-    focus: 'Studio',
-    year: '2025',
-    summary: 'A creative studio reimagined in deep navy, brass, and pale stone.',
-    challenge: 'Clarify positioning and improve lead qualification.',
-    strategy: 'Brand positioning upgrade + lead qualification',
-    impact: 'High-fit enquiries grew by 42% in 4 months.',
-    businessImpact: 'Raised average project value by 18%.',
-    image:
-      'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1800&q=80'
-  },
-  {
-    id: 'linden',
-    title: 'Linden Park Suite',
-    location: 'Kensington',
-    focus: 'Hospitality',
-    year: '2024',
-    summary: 'Soft gold tones and layered textures for an intimate boutique suite.',
-    challenge: 'Expand inbound visibility beyond referrals.',
-    strategy: 'SEO foundation + editorial content system',
-    impact: 'Qualified leads increased by 31% in 6 months.',
-    businessImpact: 'Secured a multi-property contract within 8 months.',
-    image:
-      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1800&q=80'
-  }
-]
+import Link from 'next/link'
+import { caseStudies } from '@/lib/caseStudies'
 
 export default function WorkPage() {
-  const [activeId, setActiveId] = useState('mayfair')
-
   return (
     <main className="mx-auto max-w-6xl px-6 pb-28">
       <section className="work-hero mt-10">
@@ -93,12 +33,12 @@ export default function WorkPage() {
         </div>
 
         <div className="case-grid">
-          {projects.map(project => (
-            <button
-              key={project.id}
-              type="button"
-              className={`case-card ${activeId === project.id ? 'is-active' : ''}`}
-              onClick={() => setActiveId(project.id)}
+          {caseStudies.map(project => (
+            <Link
+              key={project.slug}
+              href={`/work/${project.slug}`}
+              className="case-card"
+              aria-label={`Read case study: ${project.title}`}
             >
               <div className="case-image">
                 <Image
@@ -108,6 +48,7 @@ export default function WorkPage() {
                   height={1800}
                   className="image-cover"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  loading="lazy"
                 />
                 <div className="case-overlay">
                   <p className="work-meta">{project.location} - {project.year}</p>
@@ -117,17 +58,14 @@ export default function WorkPage() {
               </div>
               <div className="case-body">
                 <p className="text-sm text-neutral-600">{project.summary}</p>
-                {activeId === project.id && (
-                  <div className="case-details">
-                    <p><strong>Studio challenge:</strong> {project.challenge}</p>
-                    <p><strong>Strategy:</strong> {project.strategy}</p>
-                    <p><strong>Growth achieved:</strong> {project.impact}</p>
-                    <p><strong>Business impact:</strong> {project.businessImpact}</p>
-                    <span className="badge">Case study</span>
-                  </div>
-                )}
+                <div className="case-details">
+                  <p><strong>Studio challenge:</strong> {project.challenge}</p>
+                  <p><strong>Strategy:</strong> {project.strategy}</p>
+                  <p><strong>Growth achieved:</strong> {project.impact}</p>
+                  <span className="badge">View case study</span>
+                </div>
               </div>
-            </button>
+            </Link>
           ))}
         </div>
       </section>
@@ -161,3 +99,4 @@ export default function WorkPage() {
     </main>
   )
 }
+

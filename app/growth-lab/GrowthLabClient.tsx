@@ -41,6 +41,31 @@ const formatNumber = (value: number) => value.toLocaleString()
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
+function GlossaryTerm({ term, plain }: { term: string, plain: string }) {
+  const [open, setOpen] = useState(false)
+  const tooltipId = `term-${term.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+
+  return (
+    <span className="term-help">
+      <button
+        type="button"
+        className="term-trigger"
+        aria-describedby={tooltipId}
+        aria-expanded={open}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+      >
+        {term}
+      </button>
+      <span id={tooltipId} role="tooltip" className={`term-tooltip ${open ? 'is-open' : ''}`}>
+        {plain}
+      </span>
+    </span>
+  )
+}
+
 export default function GrowthLabPage() {
   const [activeStep, setActiveStep] = useState(1)
   const [maturity, setMaturity] = useState('growing')
@@ -48,6 +73,39 @@ export default function GrowthLabPage() {
   const [budget, setBudget] = useState(9500)
   const [timeframe, setTimeframe] = useState(6)
   const [services, setServices] = useState({ social: true, website: true, branding: false, seo: false })
+
+  const toggleService = (serviceId: keyof typeof services) => {
+    setServices(prev => ({
+      ...prev,
+      [serviceId]: !prev[serviceId]
+    }))
+  }
+
+  const handleButtonKeys = (event: React.KeyboardEvent<HTMLButtonElement>, action: () => void) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      action()
+    }
+  }
+
+  const handleRangeKeys = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+    min: number,
+    max: number,
+    step: number,
+    setValue: (value: number) => void,
+    current: number
+  ) => {
+    let next = current
+    if (event.key === 'ArrowRight' || event.key === 'ArrowUp') next = Math.min(max, current + step)
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') next = Math.max(min, current - step)
+    if (event.key === 'Home') next = min
+    if (event.key === 'End') next = max
+    if (next !== current) {
+      event.preventDefault()
+      setValue(next)
+    }
+  }
 
   const selectedMaturity = maturityOptions.find(item => item.id === maturity) ?? maturityOptions[1]
 
@@ -237,9 +295,15 @@ export default function GrowthLabPage() {
   ]
 
   const getContactHref = (months: number) => {
+    const packageLabel = selectedServiceLabels.length >= 3
+      ? 'Comprehensive'
+      : selectedServiceLabels.length === 2
+        ? 'Balanced'
+        : 'Focused'
     const params = new URLSearchParams({
       budget: String(budget),
       timeframe: String(months),
+      package: packageLabel,
       maturity: selectedMaturity.label,
       enquiries: String(monthlyEnquiries),
       services: selectedServiceLabels.join(', '),
@@ -278,7 +342,9 @@ export default function GrowthLabPage() {
             {activeStep === 1 && (
               <div className="growth-step-body">
                 <label className="sim-label">
-                  Studio maturity
+                  <span>
+                    <GlossaryTerm term="Maturity" plain="Current stage of your business, from new to established." />
+                  </span>
                   <div className="growth-timeframe">
                     {maturityOptions.map(option => (
                       <button
@@ -286,6 +352,10 @@ export default function GrowthLabPage() {
                         type="button"
                         className={`growth-chip ${maturity === option.id ? 'is-active' : ''}`}
                         onClick={() => setMaturity(option.id)}
+                        onKeyDown={event => handleButtonKeys(event, () => setMaturity(option.id))}
+                        role="button"
+                        aria-pressed={maturity === option.id}
+                        aria-label={`Select maturity level: ${option.label}`}
                       >
                         {option.label}
                       </button>
@@ -302,6 +372,8 @@ export default function GrowthLabPage() {
                     step={1}
                     value={monthlyEnquiries}
                     onChange={event => setMonthlyEnquiries(Number(event.target.value))}
+                    onKeyDown={event => handleRangeKeys(event, 2, 24, 1, setMonthlyEnquiries, monthlyEnquiries)}
+                    aria-label="Current monthly enquiries"
                   />
                   <div className="sim-budget">
                     <span>{monthlyEnquiries} enquiries / month</span>
@@ -345,6 +417,8 @@ export default function GrowthLabPage() {
                     step={250}
                     value={budget}
                     onChange={event => setBudget(Number(event.target.value))}
+                    onKeyDown={event => handleRangeKeys(event, 3500, 15000, 250, setBudget, budget)}
+                    aria-label="Monthly investment"
                   />
                   <div className="sim-budget">
                     <span>£{formatNumber(budget)}</span>
@@ -360,6 +434,10 @@ export default function GrowthLabPage() {
                         type="button"
                         className={`growth-chip ${timeframe === months ? 'is-active' : ''}`}
                         onClick={() => setTimeframe(months)}
+                        onKeyDown={event => handleButtonKeys(event, () => setTimeframe(months))}
+                        role="button"
+                        aria-pressed={timeframe === months}
+                        aria-label={`Select timeframe: ${months} months`}
                       >
                         {months} months
                       </button>
@@ -399,12 +477,11 @@ export default function GrowthLabPage() {
                       key={item.id}
                       type="button"
                       className={`sim-toggle ${services[item.id as keyof typeof services] ? 'is-active' : ''}`}
-                      onClick={() =>
-                        setServices(prev => ({
-                          ...prev,
-                          [item.id]: !prev[item.id as keyof typeof services]
-                        }))
-                      }
+                      onClick={() => toggleService(item.id as keyof typeof services)}
+                      onKeyDown={event => handleButtonKeys(event, () => toggleService(item.id as keyof typeof services))}
+                      role="button"
+                      aria-pressed={services[item.id as keyof typeof services]}
+                      aria-label={`${services[item.id as keyof typeof services] ? 'Deselect' : 'Select'} ${item.label}`}
                     >
                       <span className="sim-toggle-label">{item.label}</span>
                       <span className="sim-toggle-desc">{item.detail}</span>
@@ -436,7 +513,7 @@ export default function GrowthLabPage() {
                 <div className="snapshot-section">
                   <p className="sim-metric-title">Studio profile</p>
                   <div className="snapshot-field">
-                    <span>Studio maturity</span>
+                    <span><GlossaryTerm term="Maturity" plain="Current stage of your business." /></span>
                     <strong>{selectedMaturity.label}</strong>
                   </div>
                   <div className="snapshot-field">
@@ -458,7 +535,7 @@ export default function GrowthLabPage() {
                 <div className="snapshot-section">
                   <p className="sim-metric-title">Strategic identity</p>
                   <div className="snapshot-field">
-                    <span>Positioning tier</span>
+                    <span><GlossaryTerm term="Positioning tier" plain="How clearly your brand communicates premium value." /></span>
                     <strong>{projections.positioningTier}</strong>
                   </div>
                   <div className="snapshot-field">
@@ -466,7 +543,7 @@ export default function GrowthLabPage() {
                     <strong>{primaryGrowthLever}</strong>
                   </div>
                   <div className="snapshot-field">
-                    <span>Strategic intensity</span>
+                    <span><GlossaryTerm term="Package" plain="The level of service mix you selected for this plan." /></span>
                     <strong>{estimatedPriority}</strong>
                   </div>
                 </div>
@@ -624,7 +701,7 @@ export default function GrowthLabPage() {
           <div className="sim-card qualification-card">
               <div className="sim-card-head">
                 <div>
-                  <p className="eyebrow">Qualification status</p>
+                  <p className="eyebrow"><GlossaryTerm term="Fit" plain="How well your current inputs align with likely growth outcomes." /></p>
                   <h3 className="font-serif text-2xl">{projections.qualification}</h3>
                 </div>
                 <span className="simulator-pill">{projections.fitScore}% readiness</span>
