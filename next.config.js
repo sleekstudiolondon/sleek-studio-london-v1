@@ -3,11 +3,6 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'export',
   trailingSlash: true,
-  async redirects() {
-    return [
-      { source: "/api/enquiry/", destination: "/api/enquiry", permanent: true }
-    ]
-  },
   images: {
     unoptimized: true,
     domains: ['images.unsplash.com'],
