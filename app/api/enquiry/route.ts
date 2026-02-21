@@ -32,6 +32,54 @@ const sanitize = (value: unknown): string => (typeof value === 'string' ? value.
 
 const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error && error.message) return error.message
+  if (typeof error === 'string' && error.trim()) return error.trim()
+  if (error && typeof error === 'object') {
+    const maybeMessage = 'message' in error ? (error as { message?: unknown }).message : null
+    if (typeof maybeMessage === 'string' && maybeMessage.trim()) return maybeMessage.trim()
+    try {
+      return JSON.stringify(error)
+    } catch {
+      return 'Unknown error'
+    }
+  }
+
+  return 'Unknown error'
+}
+
+const resend = {
+  emails: {
+    async send(payload: {
+      from: string
+      to: string[]
+      replyTo: string
+      subject: string
+      text: string
+    }) {
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: payload.from,
+          to: payload.to,
+          reply_to: payload.replyTo,
+          subject: payload.subject,
+          text: payload.text
+        })
+      })
+
+      if (!response.ok) {
+        const text = await response.text().catch(() => '')
+        throw new Error(text || `Resend request failed with status ${response.status}`)
+      }
+    }
+  }
+}
+
 const buildTextBody = (payload: EnquiryPayload) => {
   const lines = [
     'New enquiry received',
@@ -43,6 +91,7 @@ const buildTextBody = (payload: EnquiryPayload) => {
     `Estimated budget: ${sanitize(payload.estimatedBudget) || 'Not provided'}`,
     `Timeline: ${sanitize(payload.timeline) || 'Not provided'}`,
     `Website/Instagram: ${sanitize(payload.website) || 'Not provided'}`,
+    `Company website (honeypot): ${sanitize(payload.companyWebsite) || 'Not provided'}`,
     `Consent: ${payload.consent ? 'Yes' : 'No'}`,
     '',
     'Message:',
@@ -95,40 +144,26 @@ export async function POST(request: NextRequest) {
   if (!apiKey) {
     console.error('Enquiry API unavailable: RESEND_API_KEY is not configured.')
     return NextResponse.json(
-      { ok: false, error: 'Enquiry service is temporarily unavailable. Please try again later.' },
+      { ok: false, error: 'Email service not configured (RESEND_API_KEY missing).' },
       { status: 503 }
     )
   }
 
   try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: 'Sleek Studio London <onboarding@resend.dev>',
-        to: [TO_EMAIL],
-        reply_to: email,
-        subject: SUBJECT,
-        text: buildTextBody({ ...payload, name, email, message })
-      })
+    await resend.emails.send({
+      from: 'Sleek Studio London <onboarding@resend.dev>',
+      to: [TO_EMAIL],
+      replyTo: email,
+      subject: SUBJECT,
+      text: buildTextBody({ ...payload, name, email, message })
     })
 
-    if (!response.ok) {
-      console.error(`Resend API failed with status ${response.status}.`)
-      return NextResponse.json(
-        { ok: false, error: 'Unable to deliver your enquiry right now. Please try again shortly.' },
-        { status: 502 }
-      )
-    }
-
     return NextResponse.json({ ok: true })
-  } catch {
-    console.error('Unexpected error while sending enquiry email.')
+  } catch (error) {
+    console.error('Resend email send failed.', error)
+    const message = getErrorMessage(error)
     return NextResponse.json(
-      { ok: false, error: 'Unable to submit enquiry right now. Please try again shortly.' },
+      { ok: false, error: `Email send failed: ${message}` },
       { status: 500 }
     )
   }

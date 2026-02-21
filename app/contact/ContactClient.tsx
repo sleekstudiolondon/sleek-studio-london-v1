@@ -167,6 +167,7 @@ export default function ContactClient() {
 
     lastSubmitAtRef.current = now
     setIsSubmitting(true)
+    const genericSubmitError = 'Unable to submit your enquiry right now.'
 
     try {
       const response = await fetch('/api/enquiry', {
@@ -189,13 +190,24 @@ export default function ContactClient() {
         })
       })
 
-      const result = await response.json().catch(() => ({
-        ok: false,
-        error: 'Unable to submit your enquiry right now.'
-      }))
+      const result = await response.json().catch(() => null)
 
-      if (!response.ok || result.ok !== true) {
-        setSubmitError(result.error ?? 'Unable to submit your enquiry right now.')
+      if (!response.ok) {
+        const serverError =
+          result && typeof result === 'object' && 'error' in result && typeof result.error === 'string'
+            ? result.error
+            : ''
+        setSubmitError(serverError || genericSubmitError)
+        setSubmitted(false)
+        return
+      }
+
+      if (!result || result.ok !== true) {
+        const serverError =
+          result && typeof result === 'object' && 'error' in result && typeof result.error === 'string'
+            ? result.error
+            : ''
+        setSubmitError(serverError || genericSubmitError)
         setSubmitted(false)
         return
       }
