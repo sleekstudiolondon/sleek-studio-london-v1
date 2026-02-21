@@ -148,7 +148,6 @@ export default function ContactClient() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log("Submitting")
     if (isSubmitting) return
 
     const validationErrors = validateForm(formValues)
@@ -185,7 +184,9 @@ export default function ContactClient() {
     }
 
     try {
-      const response = await fetch("/api/enquiry", {
+      const url = "/api/enquiry"
+      console.log("POSTING TO", url)
+      const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
