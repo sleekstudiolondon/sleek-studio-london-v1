@@ -1122,7 +1122,9 @@ textarea:focus-visible,
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top left, rgba(199, 186, 159, 0.18), transparent 55%);
+  background:
+    linear-gradient(125deg, rgba(4, 12, 24, 0.62), rgba(4, 12, 24, 0.28) 48%, rgba(4, 12, 24, 0.16)),
+    radial-gradient(circle at top left, rgba(199, 186, 159, 0.14), transparent 58%);
   z-index: 1;
 }
 
@@ -1131,6 +1133,14 @@ textarea:focus-visible,
   z-index: 2;
   max-width: 680px;
   color: #f5f4f1;
+}
+
+.hero-inner h1 {
+  text-shadow: 0 3px 18px rgba(0, 0, 0, 0.45);
+}
+
+.hero-inner p {
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
 .btn-hero {

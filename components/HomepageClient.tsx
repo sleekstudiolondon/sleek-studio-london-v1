@@ -90,7 +90,7 @@ export default function HomepageClient() {
       >
         <Image
           src={heroImage}
-          alt="Elegant interior with warm lighting and luxury finishes"
+          alt=""
           fill
           priority
           sizes="100vw"
@@ -110,7 +110,7 @@ export default function HomepageClient() {
           className="absolute inset-0"
           style={{
             background:
-              'radial-gradient(600px 260px at 85% 20%, rgba(46, 74, 88, 0.35), transparent 55%), linear-gradient(120deg, rgba(15, 23, 42, 0.25), rgba(15, 23, 42, 0))'
+              'radial-gradient(640px 300px at 85% 20%, rgba(7, 16, 30, 0.5), transparent 58%), linear-gradient(120deg, rgba(7, 16, 30, 0.52), rgba(7, 16, 30, 0.14))'
           }}
         />
         <div className="hero-inner">
@@ -353,7 +353,7 @@ export default function HomepageClient() {
               />
             </div>
             <p className="image-caption">{gallery[activeIndex].title}</p>
-            <div className="mt-4 flex items-center justify-between text-sm text-neutral-500">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-neutral-500">
               <button
                 type="button"
                 className="btn-secondary"
