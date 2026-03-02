@@ -1,15 +1,21 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
-  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './lib/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
   theme: {
     extend: {
       colors: {
-        accent: '#B08D57'
+        accent: '#b59f84'
       },
       fontFamily: {
-        serif: ['Playfair Display', 'serif'],
-        sans: ['Inter', 'sans-serif']
+        heading: ['var(--font-heading)', 'serif'],
+        body: ['var(--font-body)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-heading)', 'serif'],
+        sans: ['var(--font-body)', 'system-ui', 'sans-serif']
       }
     }
   },

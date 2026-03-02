@@ -1,0 +1,12 @@
+
+> dev
+> next dev -H localhost -p 3000
+
+   ▲ Next.js 15.5.10
+   - Local:        http://localhost:3000
+   - Network:      http://localhost:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1621ms
+[?25h

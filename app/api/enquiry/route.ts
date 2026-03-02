@@ -1,32 +1,35 @@
-﻿import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
 export const runtime = "nodejs"
 
-type GrowthLabPayload = {
-  budget?: number | null
-  packageLabel?: string
-  timeframe?: string
-  maturity?: string
-  fit?: string
-  strategy?: string
+export async function GET() {
+  return NextResponse.json({ ok: true, probe: "enquiry route alive" }, { status: 200 })
+}
+
+export async function OPTIONS() {
+  return NextResponse.json({ ok: true }, { status: 200 })
 }
 
 type EnquiryPayload = {
+  selectedPlanId?: string
+  selectedPlanName?: string
   name?: string
   email?: string
+  phone?: string
+  website?: string
   studio?: string
   projectType?: string
-  estimatedBudget?: string
   timeline?: string
-  website?: string
+  budgetRange?: string
+  preferredContact?: string
   message?: string
-  consent?: boolean
+  brandAssets?: string
+  copywriting?: string
   companyWebsite?: string
-  growthLab?: GrowthLabPayload | null
 }
 
 const TO_EMAIL = 'sleek.studiolondon@gmail.com'
-const SUBJECT = 'New Enquiry \u2014 Sleek Studio London'
+const SUBJECT = 'New Application - Sleek Studio London'
 
 const sanitize = (value: unknown): string => (typeof value === 'string' ? value.trim() : '')
 
@@ -82,56 +85,56 @@ const resend = {
 
 const buildTextBody = (payload: EnquiryPayload) => {
   const lines = [
-    'New enquiry received',
+    'New application received',
     '',
     `Name: ${sanitize(payload.name)}`,
     `Email: ${sanitize(payload.email)}`,
+    `Phone: ${sanitize(payload.phone) || 'Not provided'}`,
+    `Preferred contact: ${sanitize(payload.preferredContact) || 'Not provided'}`,
+    `Website: ${sanitize(payload.website) || 'Not provided'}`,
     `Studio: ${sanitize(payload.studio) || 'Not provided'}`,
+    `Selected plan: ${sanitize(payload.selectedPlanName) || sanitize(payload.selectedPlanId) || 'Not provided'}`,
     `Project type: ${sanitize(payload.projectType) || 'Not provided'}`,
-    `Estimated budget: ${sanitize(payload.estimatedBudget) || 'Not provided'}`,
     `Timeline: ${sanitize(payload.timeline) || 'Not provided'}`,
-    `Website/Instagram: ${sanitize(payload.website) || 'Not provided'}`,
+    `Budget range: ${sanitize(payload.budgetRange) || 'Not provided'}`,
+    `Brand assets available: ${sanitize(payload.brandAssets) || 'Not provided'}`,
+    `Copywriting needed: ${sanitize(payload.copywriting) || 'Not provided'}`,
     `Company website (honeypot): ${sanitize(payload.companyWebsite) || 'Not provided'}`,
-    `Consent: ${payload.consent ? 'Yes' : 'No'}`,
     '',
     'Message:',
     sanitize(payload.message)
   ]
 
-  if (payload.growthLab) {
-    const lab = payload.growthLab
-    lines.push('', 'Growth Lab context:')
-    lines.push(`Package: ${sanitize(lab.packageLabel) || 'Not provided'}`)
-    lines.push(`Timeframe: ${sanitize(lab.timeframe) || 'Not provided'} months`)
-    lines.push(`Maturity: ${sanitize(lab.maturity) || 'Not provided'}`)
-    lines.push(`Fit: ${sanitize(lab.fit) || 'Not provided'}`)
-    lines.push(`Strategy: ${sanitize(lab.strategy) || 'Not provided'}`)
-    lines.push(`Budget: ${typeof lab.budget === 'number' ? `GBP ${lab.budget}` : 'Not provided'}`)
-  }
-
   return lines.join('\n')
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
   let payload: EnquiryPayload
 
   try {
-    payload = (await request.json()) as EnquiryPayload
+    payload = (await req.json()) as EnquiryPayload
   } catch {
     return NextResponse.json({ ok: false, error: 'Invalid JSON body.' }, { status: 400 })
   }
 
   if (sanitize(payload.companyWebsite)) {
-    return NextResponse.json({ ok: false, error: 'Unable to submit enquiry.' }, { status: 400 })
+    return NextResponse.json({ ok: true }, { status: 200 })
   }
 
   const name = sanitize(payload.name)
   const email = sanitize(payload.email)
+  const projectType = sanitize(payload.projectType)
+  const timeline = sanitize(payload.timeline)
+  const budgetRange = sanitize(payload.budgetRange)
+  const preferredContact = sanitize(payload.preferredContact)
   const message = sanitize(payload.message)
 
-  if (!name || !email || !message) {
+  if (!name || !email || !projectType || !timeline || !budgetRange || !preferredContact || !message) {
     return NextResponse.json(
-      { ok: false, error: 'Name, email, and message are required.' },
+      {
+        ok: false,
+        error: 'Name, email, project type, timeline, budget range, preferred contact method, and message are required.'
+      },
       { status: 400 }
     )
   }
@@ -155,7 +158,16 @@ export async function POST(request: NextRequest) {
       to: [TO_EMAIL],
       replyTo: email,
       subject: SUBJECT,
-      text: buildTextBody({ ...payload, name, email, message })
+      text: buildTextBody({
+        ...payload,
+        name,
+        email,
+        projectType,
+        timeline,
+        budgetRange,
+        preferredContact,
+        message
+      })
     })
 
     return NextResponse.json({ ok: true })

@@ -48,32 +48,32 @@ const services = [
 
 const packages = [
   {
-    name: 'Foundation',
-    price: 'from £3,500',
-    bestFor: 'Early-stage studios seeking clarity and cohesion.',
-    timeline: '4-6 weeks',
+    name: 'Entry',
+    price: '£2,000 initial + from £999/mo',
+    bestFor: 'Studios launching a focused premium website.',
+    timeline: '4-6 days',
     includes: ['Brand audit', 'Light site refresh', 'Content direction']
   },
   {
-    name: 'Signature',
-    price: 'from £6,500',
-    bestFor: 'Established practices ready to elevate positioning.',
-    timeline: '6-8 weeks',
+    name: 'Mid',
+    price: '£12,000 initial + from £7,000/mo',
+    bestFor: 'Studios handling medium complexity and wider scope.',
+    timeline: '6-8 days',
     includes: ['Brand strategy', 'Luxury website', 'SEO foundations'],
     featured: true
   },
   {
-    name: 'Complete',
-    price: 'from £10,000',
-    bestFor: 'Full transformation across brand, web, and content.',
-    timeline: '8-12 weeks',
+    name: 'Top',
+    price: '£25,000 initial + from £15,000/mo',
+    bestFor: 'Complex ecommerce or multi-location execution.',
+    timeline: '4-7 days',
     includes: ['Full identity system', 'Editorial site build', 'Content templates']
   },
   {
-    name: 'Legacy',
-    price: 'from £15,000',
-    bestFor: 'Studios preparing for large-scale growth or international reach.',
-    timeline: '12-16 weeks',
+    name: 'Top Plus',
+    price: '£25,000 initial + from £15,000/mo',
+    bestFor: 'Studios requiring priority scheduling and concierge handling.',
+    timeline: '4-10 days',
     includes: ['Positioning refresh', 'Multi-page web build', 'Launch campaign']
   }
 ]

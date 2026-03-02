@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Button from "../components/ui/Button";
 
 export default function NotFound() {
   return (
@@ -9,13 +9,13 @@ export default function NotFound() {
         The page you were looking for may have been moved, renamed, or no longer exists.
         Explore the studio instead:
       </p>
-      <div className="flex flex-wrap gap-3">
-        <Link href="/" className="btn-primary">Back to home</Link>
-        <Link href="/services" className="btn-secondary">Services</Link>
-        <Link href="/work" className="btn-secondary">Work</Link>
-        <Link href="/contact" className="btn-secondary">Contact</Link>
+      <div className="button-row">
+        <Button href="/">Back to home</Button>
+        <Button href="/services" variant="secondary">Services</Button>
+        <Button href="/work" variant="secondary">Work</Button>
+        <Button href="/contact" variant="secondary">Contact</Button>
       </div>
     </main>
-  )
+  );
 }
 
