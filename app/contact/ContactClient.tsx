@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import Button from "../../components/ui/Button";
-import { CONTACT_BUDGET_OPTIONS, PACKAGES, formatGBP, type PackageId } from "../../lib/pricing";
+import { CONTACT_BUDGET_OPTIONS, PACKAGES, getPackagePricing, type PackageId } from "../../lib/pricing";
 
 type ContactFormValues = {
   selectedPlanId: PackageId;
@@ -11,7 +11,6 @@ type ContactFormValues = {
   phone: string;
   website: string;
   studio: string;
-  projectType: string;
   timeline: string;
   budgetRange: string;
   preferredContact: string;
@@ -30,7 +29,6 @@ const initialValues: ContactFormValues = {
   phone: "",
   website: "",
   studio: "",
-  projectType: "",
   timeline: "",
   budgetRange: "",
   preferredContact: "",
@@ -52,7 +50,6 @@ function validateForm(values: ContactFormValues): ContactFormErrors {
     errors.email = "Please enter a valid email address.";
   }
 
-  if (!values.projectType) errors.projectType = "Please select a website type.";
   if (!values.timeline) errors.timeline = "Please select your preferred start window.";
   if (!values.budgetRange) errors.budgetRange = "Please select a project budget.";
   if (!values.selectedPlanId) errors.selectedPlanId = "Please choose a plan.";
@@ -60,8 +57,6 @@ function validateForm(values: ContactFormValues): ContactFormErrors {
 
   if (!values.message.trim()) {
     errors.message = "Please share a brief project outline.";
-  } else if (values.message.trim().length < 30) {
-    errors.message = "Please add at least 30 characters for a useful review.";
   }
 
   return errors;
@@ -73,6 +68,7 @@ export default function ContactClient() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [expandedPlans, setExpandedPlans] = useState<Partial<Record<PackageId, boolean>>>({});
   const lastSubmitAtRef = useRef(0);
 
   const detailsCharCount = useMemo(() => formValues.message.trim().length, [formValues.message]);
@@ -101,6 +97,7 @@ export default function ContactClient() {
     setErrors({});
     setSubmitError("");
     setSubmitted(false);
+    setExpandedPlans({});
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -132,7 +129,6 @@ export default function ContactClient() {
       phone: formValues.phone,
       website: formValues.website,
       studio: formValues.studio,
-      projectType: formValues.projectType,
       timeline: formValues.timeline,
       budgetRange: formValues.budgetRange,
       preferredContact: formValues.preferredContact,
@@ -190,6 +186,10 @@ export default function ContactClient() {
           <div className="contact-plan-grid" role="radiogroup" aria-label="Choose your plan">
             {PACKAGES.map((pkg) => {
               const isSelected = formValues.selectedPlanId === pkg.id;
+              const pricing = getPackagePricing(pkg);
+              const isExpanded = Boolean(expandedPlans[pkg.id]);
+              const detailsId = `contact-plan-details-${pkg.id}`;
+
               return (
                 <label
                   key={pkg.id}
@@ -203,12 +203,37 @@ export default function ContactClient() {
                     onChange={handleChange}
                     onBlur={() => validateField("selectedPlanId")}
                   />
-                  <p className="contact-plan-card-name">{pkg.name}</p>
-                  <p className="contact-plan-card-price">{formatGBP(pkg.deposit)} initial deposit</p>
-                  <p className="contact-plan-card-monthly">From {formatGBP(pkg.monthly)}/mo</p>
-                  <p className="contact-plan-card-ideal-label">Ideal for</p>
-                  <p className="contact-plan-card-ideal-copy">{pkg.intendedFor}</p>
-                  <p className="contact-plan-card-description">{pkg.description}</p>
+                  <div className="contact-plan-card-head">
+                    <p className="contact-plan-card-name">{pkg.name}</p>
+                  </div>
+                  <div className="contact-plan-card-pricing">
+                    <p className="contact-plan-card-price">{pricing.primary}</p>
+                    {pricing.secondary ? <p className="contact-plan-card-monthly">{pricing.secondary}</p> : null}
+                  </div>
+                  <button
+                    type="button"
+                    className="contact-plan-toggle"
+                    aria-expanded={isExpanded}
+                    aria-controls={detailsId}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setExpandedPlans((prev) => ({ ...prev, [pkg.id]: !prev[pkg.id] }));
+                    }}
+                  >
+                    {isExpanded ? "See less" : "See more"}
+                  </button>
+                  <div
+                    id={detailsId}
+                    className={`contact-plan-card-details ${isExpanded ? "contact-plan-card-details-expanded" : ""}`}
+                  >
+                    <p className="contact-plan-card-description">{pkg.description}</p>
+                    <p className="contact-plan-card-details-label">Included</p>
+                    <ul className="contact-plan-card-perks">
+                      {pkg.includes.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </label>
               );
             })}
@@ -329,32 +354,6 @@ export default function ContactClient() {
           </div>
 
           <div>
-            <label htmlFor="projectType" className="form-label">
-              Website Type
-            </label>
-            <select
-              id="projectType"
-              name="projectType"
-              className={`form-field form-select ${errors.projectType ? "is-invalid" : ""}`}
-              value={formValues.projectType}
-              onChange={handleChange}
-              onBlur={() => validateField("projectType")}
-              aria-describedby={errors.projectType ? "project-type-error" : undefined}
-            >
-              <option value="">Select website type</option>
-              <option value="Portfolio">Portfolio</option>
-              <option value="Studio">Studio</option>
-              <option value="Ecommerce">Ecommerce</option>
-              <option value="Multi-location">Multi-location</option>
-            </select>
-            {errors.projectType ? (
-              <p id="project-type-error" className="form-error">
-                {errors.projectType}
-              </p>
-            ) : null}
-          </div>
-
-          <div>
             <label htmlFor="timeline" className="form-label">
               Preferred Start
             </label>
@@ -370,8 +369,8 @@ export default function ContactClient() {
               <option value="">Select start window</option>
               <option value="ASAP">ASAP</option>
               <option value="Within 2 weeks">Within 2 weeks</option>
-              <option value="This month">This month</option>
-              <option value="Not sure">Not sure</option>
+              <option value="Within 1 month">Within 1 month</option>
+              <option value="Flexible">Flexible</option>
             </select>
             {errors.timeline ? (
               <p id="timeline-error" className="form-error">
@@ -457,7 +456,7 @@ export default function ContactClient() {
             aria-describedby={errors.message ? "message-error" : "message-hint"}
           />
           <p id="message-hint" className="contact-helper">
-            Include priorities, must-have pages, and timeline context. Current characters: {detailsCharCount}
+            Include priorities, must-have pages, launch timing, and anything we should account for. Current characters: {detailsCharCount}
           </p>
           {errors.message ? (
             <p id="message-error" className="form-error">
@@ -493,7 +492,7 @@ export default function ContactClient() {
 
         {submitted ? (
           <p className="contact-status contact-status-success" role="status">
-            Enquiry received. We will reply within one business day with a recommended next step.
+            Enquiry received. We will reply within one business day with a recommended launch pathway.
           </p>
         ) : null}
 

@@ -1,989 +1,624 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import Reveal from "../../components/Reveal";
+import { useMemo, useState } from "react";
 import Button from "../../components/ui/Button";
-import { PACKAGE_MAP, type PackageId, formatGBP } from "../../lib/pricing";
+import { PACKAGE_MAP, type PackageId, formatGBP, getPackagePricing } from "../../lib/pricing";
 
-type WebsiteType = "Portfolio" | "Studio" | "Ecommerce" | "Multi-location";
+type CurrencyCode = "GBP" | "USD" | "EUR" | "AUD" | "CAD";
 type YesNo = "yes" | "no";
-type Urgency = "ASAP" | "Within 2 weeks" | "This month" | "Not sure";
-type AddOn = "Blog" | "Booking" | "Multi-language";
+type Urgency = "As soon as possible" | "Within 2 weeks" | "Within 1 month" | "Flexible";
+type Step = 1 | 2 | 3 | 4;
+type Enhancement =
+  | "Payment integration"
+  | "Booking system"
+  | "Working contact form"
+  | "Basic automations"
+  | "FAQ section"
+  | "AI live chat";
 
-type SimulatorValues = {
+type Values = {
   studioName: string;
-  budget: string;
-  websiteType: WebsiteType | "";
+  websitePurpose: string;
+  hasExistingSite: YesNo | "";
+  currentWebsite: string;
+  improvementNotes: string;
+  budgetAmount: string;
+  selectedCurrency: CurrencyCode;
   pages: number;
-  addOns: AddOn[];
+  enhancements: Enhancement[];
   brandReady: YesNo | "";
   copyReady: YesNo | "";
   urgency: Urgency | "";
 };
 
-type SimulatorErrors = Partial<Record<keyof SimulatorValues, string>>;
-
-type ResultPhase = {
-  title: string;
-  startDay: number;
-  endDay: number;
-  dayRange: string;
-  dateRange: string;
-};
-
-type SimulationResult = {
+type Errors = Partial<Record<keyof Values, string>>;
+type Result = {
   packageId: PackageId;
-  totalDays: number;
-  launchDate: string;
-  startDate: string;
-  reasons: string[];
-  budgetAlignmentNote: string;
-  priorityNote: string;
-  phases: ResultPhase[];
+  estimatedDays: number;
+  projectedDate: string;
+  headline: string;
+  explanation: string;
+  budgetNote: string;
+  nextStep: string;
+  budgetGbp: number;
 };
 
-type TransitionDirection = "next" | "prev";
-type TransitionPhase = "idle" | "out" | "in";
-
-const STEP_CONTENT = [
-  {
-    label: "Brief",
-    title: "What are we building for your studio?",
-    support:
-      "Set your baseline scope and investment so the recommendation can align package fit with delivery confidence.",
-  },
-  {
-    label: "Scope",
-    title: "How large does the site need to be?",
-    support: "Define page count and launch-critical enhancements to shape complexity and production depth.",
-  },
-  {
-    label: "Readiness",
-    title: "How ready are your assets and content?",
-    support: "Tell us what is prepared now so we can balance speed, support, and schedule realism.",
-  },
-  {
-    label: "Recommendation",
-    title: "Here's your delivery track.",
-    support: "Review package fit, timeline, and phase plan generated from your answers.",
-  },
-] as const;
-
-const WEBSITE_TYPE_OPTIONS: Array<{ value: WebsiteType; title: string; detail: string }> = [
-  {
-    value: "Portfolio",
-    title: "Portfolio",
-    detail: "A focused showcase for projects, capabilities, and enquiries.",
-  },
-  {
-    value: "Studio",
-    title: "Studio",
-    detail: "A broader brand presence with service narratives and layered content.",
-  },
-  {
-    value: "Ecommerce",
-    title: "Ecommerce",
-    detail: "A conversion-led build with catalogue and checkout flow complexity.",
-  },
-  {
-    value: "Multi-location",
-    title: "Multi-location",
-    detail: "A structured platform for multiple sites, services, and local paths.",
-  },
-];
-
-const URGENCY_OPTIONS: Urgency[] = ["ASAP", "Within 2 weeks", "This month", "Not sure"];
-const PAGE_TURN_HALF_MS = 280;
-const REDUCED_FADE_MS = 120;
-const ADD_ONS: AddOn[] = ["Blog", "Booking", "Multi-language"];
-
-const INITIAL_VALUES: SimulatorValues = {
+const INITIAL_VALUES: Values = {
   studioName: "",
-  budget: "",
-  websiteType: "",
-  pages: 8,
-  addOns: [],
+  websitePurpose: "",
+  hasExistingSite: "",
+  currentWebsite: "",
+  improvementNotes: "",
+  budgetAmount: "",
+  selectedCurrency: "GBP",
+  pages: 3,
+  enhancements: [],
   brandReady: "",
   copyReady: "",
   urgency: "",
 };
 
-function toStartOfDay(date = new Date()) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
+const STEPS = [
+  { id: 1 as Step, label: "The Brief", title: "Tell us what this launch needs to do." },
+  { id: 2 as Step, label: "Scope & Features", title: "Shape the first release." },
+  { id: 3 as Step, label: "Timing & Readiness", title: "Balance speed with what is already prepared." },
+  { id: 4 as Step, label: "Launch Estimate", title: "Review your recommendation and launch path." },
+];
 
-function addDays(date: Date, days: number) {
+const ENHANCEMENTS = [
+  ["Payment integration", 4, 2, "Payments, checkout, or deposits."],
+  ["Booking system", 3, 2, "Scheduling for calls or appointments."],
+  ["Working contact form", 1, 1, "Reliable enquiry handling."],
+  ["Basic automations", 2, 1, "Simple follow-ups and routing."],
+  ["FAQ section", 1, 1, "Clearer conversion support."],
+  ["AI live chat", 3, 2, "Always-on first-response support."],
+] as const satisfies ReadonlyArray<readonly [Enhancement, number, number, string]>;
+
+const CURRENCIES: ReadonlyArray<{
+  code: CurrencyCode;
+  rateToGbp: number;
+  example: string;
+}> = [
+  { code: "GBP", rateToGbp: 1, example: "8500" },
+  { code: "USD", rateToGbp: 0.79, example: "8000" },
+  { code: "EUR", rateToGbp: 0.86, example: "7500" },
+  { code: "AUD", rateToGbp: 0.52, example: "12000" },
+  { code: "CAD", rateToGbp: 0.58, example: "11000" },
+];
+const MAX_BUDGET_GBP = 1_000_000;
+
+const URGENCY_OPTIONS: Array<{ value: Urgency; detail: string }> = [
+  { value: "As soon as possible", detail: "Priority pace with faster review cycles." },
+  { value: "Within 2 weeks", detail: "Fast launch planning with tighter delivery pressure." },
+  { value: "Within 1 month", detail: "A balanced window for a polished launch." },
+  { value: "Flexible", detail: "More room to shape scope calmly." },
+];
+
+const READY_OPTIONS: Array<{ value: YesNo; label: string; detail: string }> = [
+  { value: "yes", label: "Yes", detail: "Already close to production-ready." },
+  { value: "no", label: "No", detail: "We should plan for support." },
+];
+
+const addDays = (date: Date, days: number) => {
   const next = new Date(date);
   next.setDate(next.getDate() + days);
   return next;
-}
-
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value));
-}
-
-const PACKAGE_ORDER: PackageId[] = ["entry", "mid", "top"];
-const ADD_ON_COMPLEXITY: Record<AddOn, number> = {
-  Blog: 1,
-  Booking: 1,
-  "Multi-language": 2,
 };
 
-type RecommendationSelection = {
-  packageId: PackageId;
-  complexityScore: number;
-  budgetAlignmentNote: string;
-};
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(date);
 
-function getWebsiteTypeScore(websiteType: SimulatorValues["websiteType"]) {
-  if (websiteType === "Studio") return 1;
-  if (websiteType === "Ecommerce" || websiteType === "Multi-location") return 3;
-  return 0;
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
+const enhancementWeight = (item: Enhancement) => ENHANCEMENTS.find(([value]) => value === item)![1];
+const enhancementTime = (item: Enhancement) => ENHANCEMENTS.find(([value]) => value === item)![2];
+const currencyConfig = (code: CurrencyCode) => CURRENCIES.find((item) => item.code === code)!;
+const formatPageCountValue = (pages: number) => (pages >= 20 ? "20+" : String(pages));
+const formatPageCountLabel = (pages: number) =>
+  `${formatPageCountValue(pages)} page${pages === 1 ? "" : "s"}`;
+
+function formatMoney(value: number, currency: CurrencyCode) {
+  return new Intl.NumberFormat(currency === "GBP" ? "en-GB" : "en", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(value);
 }
 
-function getPagesScore(pages: number) {
-  if (pages >= 31) return 3;
-  if (pages >= 21) return 2;
-  if (pages >= 11) return 1;
-  return 0;
+function getBudgetSnapshot(values: Pick<Values, "budgetAmount" | "selectedCurrency">) {
+  const enteredAmount = Number(values.budgetAmount);
+  const hasAmount = values.budgetAmount.trim() !== "" && Number.isFinite(enteredAmount) && enteredAmount > 0;
+
+  if (!hasAmount) {
+    return {
+      enteredAmount: null,
+      convertedGbp: null,
+      enteredLabel: "Not entered",
+      planningLabel: "Planning range appears after you enter a budget",
+    };
+  }
+
+  const convertedGbp = Math.min(
+    Math.round((enteredAmount * currencyConfig(values.selectedCurrency).rateToGbp) / 50) * 50,
+    MAX_BUDGET_GBP
+  );
+
+  return {
+    enteredAmount,
+    convertedGbp,
+    enteredLabel: `${formatMoney(enteredAmount, values.selectedCurrency)} ${values.selectedCurrency}`,
+    planningLabel: `${formatGBP(convertedGbp)} GBP`,
+  };
 }
 
-function getAddOnScore(addOns: AddOn[]) {
-  return addOns.reduce((total, addOn) => total + ADD_ON_COMPLEXITY[addOn], 0);
+function getMaxBudgetForCurrency(currency: CurrencyCode) {
+  return Math.floor(MAX_BUDGET_GBP / currencyConfig(currency).rateToGbp);
 }
 
-function getComplexityScore(values: SimulatorValues) {
+function sanitizeBudgetAmount(rawValue: string, currency: CurrencyCode) {
+  if (!rawValue.trim()) {
+    return { value: "", capped: false };
+  }
+
+  const numericValue = Number(rawValue);
+  if (!Number.isFinite(numericValue) || numericValue <= 0) {
+    return { value: rawValue, capped: false };
+  }
+
+  const clampedValue = Math.min(numericValue, getMaxBudgetForCurrency(currency));
+  return {
+    value: String(clampedValue),
+    capped: clampedValue !== numericValue,
+  };
+}
+
+function purposeScore(copy: string) {
+  const text = copy.toLowerCase();
   let score = 0;
-  score += getWebsiteTypeScore(values.websiteType);
-  score += getPagesScore(values.pages);
-
-  if (values.brandReady === "no") score += 1;
-  if (values.copyReady === "no") score += 1;
-
-  score += getAddOnScore(values.addOns);
+  if (/(shop|store|sell|checkout|payment|ecommerce)/.test(text)) score += 5;
+  if (/(book|booking|appointment|consultation|calendar)/.test(text)) score += 4;
+  if (/(portal|login|member|dashboard)/.test(text)) score += 4;
+  if (/(multi|location|locations|branch|migration|redesign|rebuild)/.test(text)) score += 3;
+  if (text.trim().split(/\s+/).filter(Boolean).length >= 18) score += 1;
   return score;
 }
 
-function mapComplexityToTier(score: number): PackageId {
-  if (score >= 6) return "top";
-  if (score >= 3) return "mid";
-  return "entry";
+function urgencyScore(urgency: Values["urgency"]) {
+  if (urgency === "As soon as possible") return 3;
+  if (urgency === "Within 2 weeks") return 2;
+  if (urgency === "Within 1 month") return 1;
+  return 0;
 }
 
-function applyBudgetSanityCheck(initialTier: PackageId, budget: number) {
-  let tierIndex = PACKAGE_ORDER.indexOf(initialTier);
+function pageTier(pages: number): PackageId {
+  if (pages <= PACKAGE_MAP.entry.pageCount) return "entry";
+  if (pages <= PACKAGE_MAP.mid.pageCount) return "mid";
+  return "top";
+}
 
-  while (tierIndex > 0 && PACKAGE_MAP[PACKAGE_ORDER[tierIndex]].minBudget > budget) {
-    tierIndex -= 1;
+function recommend(values: Values, budgetSnapshot: ReturnType<typeof getBudgetSnapshot>): Result | null {
+  const budget = budgetSnapshot.convertedGbp ?? 0;
+  if (!values.websitePurpose.trim() || !values.budgetAmount.trim() || !values.urgency || !budgetSnapshot.convertedGbp) {
+    return null;
   }
 
-  const packageId = PACKAGE_ORDER[tierIndex];
-  const budgetAlignmentNote =
-    PACKAGE_MAP[packageId].minBudget > budget
-      ? "Based on your budget, we'd propose a streamlined scope to stay aligned."
+  const enhancementScore = values.enhancements.reduce((total, item) => total + enhancementWeight(item), 0);
+  const complexityScore =
+    purposeScore(values.websitePurpose) +
+    enhancementScore +
+    urgencyScore(values.urgency) +
+    (values.hasExistingSite === "yes" ? 2 : 0) +
+    (values.currentWebsite.trim() ? 1 : 0) +
+    (values.improvementNotes.trim() ? 1 : 0) +
+    (values.brandReady === "no" ? 1 : 0) +
+    (values.copyReady === "no" ? 1 : 0);
+
+  let packageId = pageTier(values.pages);
+  if (packageId !== "top" && (complexityScore >= 10 || enhancementScore >= 6)) packageId = "top";
+  else if (packageId === "entry" && (complexityScore >= 4 || values.pages >= 4)) packageId = "mid";
+  if (budget >= 20000 && packageId === "entry" && (values.pages > 3 || enhancementScore > 0)) packageId = "mid";
+  if (budget >= 30000 && packageId !== "top" && (values.pages > 8 || complexityScore >= 8)) packageId = "top";
+
+  let estimatedDays = { entry: 5, mid: 8, top: 13 }[packageId];
+  if (values.pages > 3) estimatedDays += 1;
+  if (values.pages > 8) estimatedDays += 2;
+  estimatedDays += values.enhancements.reduce((total, item) => total + enhancementTime(item), 0);
+  if (values.hasExistingSite === "yes") estimatedDays += 2;
+  if (values.currentWebsite.trim()) estimatedDays += 1;
+  if (values.improvementNotes.trim()) estimatedDays += 1;
+  if (values.brandReady === "no") estimatedDays += 1;
+  if (values.copyReady === "no") estimatedDays += 1;
+  if (values.urgency === "As soon as possible" || values.urgency === "Within 2 weeks") estimatedDays += 1;
+  estimatedDays = clamp(estimatedDays, 4, 28);
+
+  const item = PACKAGE_MAP[packageId];
+  const pricing = getPackagePricing(item);
+  const budgetNote =
+    budget > 0 && budget < item.minBudget
+      ? packageId === "top"
+        ? "Your brief points toward Top, though we may need to phase the rollout if you want to stay close to the current budget."
+        : "Your brief points upward, though we may need to trim scope or phase the rollout to stay aligned with budget."
       : "";
-
-  return { packageId, budgetAlignmentNote };
-}
-
-/*
-Deterministic recommendation checks:
-1) Portfolio, 8 pages, brand/copy ready, no add-ons, budget 12000 => entry.
-2) Studio, 18 pages, brand not ready, copy ready, Blog, budget 20000 => mid.
-3) Ecommerce, 32 pages, brand/copy not ready, Booking + Multi-language, budget 45000 => top.
-4) Same as #3 with budget 12000 => entry + streamlined scope note.
-*/
-function getRecommendation(values: SimulatorValues): RecommendationSelection {
-  const complexityScore = getComplexityScore(values);
-  const mappedTier = mapComplexityToTier(complexityScore);
-  const budget = Number(values.budget);
-  const safeBudget = Number.isFinite(budget) ? budget : 0;
-  const { packageId, budgetAlignmentNote } = applyBudgetSanityCheck(mappedTier, safeBudget);
 
   return {
     packageId,
-    complexityScore,
-    budgetAlignmentNote,
+    estimatedDays,
+    projectedDate: formatDate(addDays(new Date(), estimatedDays)),
+    headline: `Your website could be live in ${estimatedDays} days if you apply today`,
+    explanation:
+      packageId === "top"
+        ? `Your brief points to a more demanding launch path with ${formatPageCountLabel(values.pages)}, ${values.enhancements.length} selected enhancement${values.enhancements.length === 1 ? "" : "s"}, and a higher-support delivery route. ${pricing.primary} keeps pricing private until scope is confirmed.`
+        : packageId === "mid"
+          ? `Your brief points to a stronger business build with ${formatPageCountLabel(values.pages)}, ${values.enhancements.length} selected enhancement${values.enhancements.length === 1 ? "" : "s"}, and more room for support after launch. It starts at ${pricing.primary} and ${pricing.secondary}.`
+          : `Your brief still fits a focused first release with ${formatPageCountLabel(values.pages)} and ${values.enhancements.length} selected enhancement${values.enhancements.length === 1 ? "" : "s"}, keeping the launch lean without overbuilding phase one. It starts at ${pricing.primary} and ${pricing.secondary}.`,
+    budgetNote,
+    nextStep:
+      values.hasExistingSite === "yes"
+        ? "Apply with your current site details so we can map the cleanest rebuild or migration path."
+        : "Apply now and we will come back with the clearest route to launch, scope, and next step.",
+    budgetGbp: budget,
   };
 }
 
-function getTimelineDays(values: SimulatorValues, packageId: PackageId) {
-  const baseByPackage: Record<PackageId, number> = {
-    top: 4,
-    mid: 7,
-    entry: 8,
-  };
-
-  let totalDays = baseByPackage[packageId];
-
-  if (values.websiteType === "Ecommerce") totalDays += 1;
-  if (values.pages > 10) totalDays += 1;
-  if (values.pages > 20) totalDays += 1;
-  if (values.brandReady === "no") totalDays += 1;
-  if (values.copyReady === "no") totalDays += 1;
-  if (values.websiteType === "Multi-location") totalDays += 1;
-
-  return clamp(totalDays, 4, 10);
-}
-
-function formatDayRange(startDay: number, endDay: number) {
-  if (startDay === endDay) return `Day ${startDay}`;
-  return `Days ${startDay}-${endDay}`;
-}
-
-function formatDateRange(startDate: Date, startDay: number, endDay: number) {
-  const start = addDays(startDate, startDay - 1);
-  const end = addDays(startDate, endDay - 1);
-  if (startDay === endDay) return formatDate(start);
-  return `${formatDate(start)} - ${formatDate(end)}`;
-}
-
-function buildPhases(totalDays: number, startDate: Date): ResultPhase[] {
-  const discoveryEnd = 1;
-  const designEnd = Math.max(2, Math.round(totalDays * 0.4));
-  const buildEnd = Math.max(designEnd + 1, Math.round(totalDays * 0.75));
-  const qaStart = Math.min(totalDays, buildEnd + 1);
-  const qaEnd = Math.max(qaStart, totalDays - 1);
-
-  const plan = [
-    { title: "Discovery", startDay: 1, endDay: discoveryEnd },
-    { title: "Design", startDay: 2, endDay: designEnd },
-    { title: "Build", startDay: designEnd + 1, endDay: buildEnd },
-    { title: "QA", startDay: qaStart, endDay: qaEnd },
-    { title: "Launch", startDay: totalDays, endDay: totalDays },
-  ];
-
-  return plan.map((phase) => ({
-    title: phase.title,
-    startDay: phase.startDay,
-    endDay: phase.endDay,
-    dayRange: formatDayRange(phase.startDay, phase.endDay),
-    dateRange: formatDateRange(startDate, phase.startDay, phase.endDay),
-  }));
-}
-
-function buildWhyPackage(values: SimulatorValues, packageId: PackageId, complexityScore: number) {
-  const reasons: string[] = [];
-
-  reasons.push(`Scope planning covers ${values.pages} pages.`);
-
-  if (values.websiteType === "Ecommerce") {
-    reasons.push("Commerce complexity is included for catalogue, checkout, and conversion flow handling.");
-  } else if (values.websiteType === "Multi-location") {
-    reasons.push("Multi-location structure adds routing and operational complexity across locations.");
-  }
-
-  if (values.brandReady === "no") {
-    reasons.push("Identity support is included because brand assets are not ready yet.");
-  }
-
-  if (values.copyReady === "no") {
-    reasons.push("Content structuring is included because editorial copy is still in preparation.");
-  }
-
-  if (values.pages >= 21) {
-    reasons.push("Higher page volume requires deeper information architecture and navigation planning.");
-  }
-
-  if (values.addOns.length > 0) {
-    reasons.push(`Selected additions: ${values.addOns.join(", ")}.`);
-  }
-
-  if (packageId === "top") {
-    reasons.push(`Complexity score ${complexityScore} maps to the top delivery tier.`);
-  } else if (packageId === "mid") {
-    reasons.push(`Complexity score ${complexityScore} maps to the mid delivery tier.`);
-  } else {
-    reasons.push(`Complexity score ${complexityScore} maps to the entry delivery tier.`);
-  }
-
-  if (reasons.length === 2) {
-    reasons.push("Inputs indicate a focused scope with strong readiness, suited to a streamlined delivery track.");
-  }
-
-  return reasons;
-}
-
-function validateStep(step: number, values: SimulatorValues): SimulatorErrors {
-  const errors: SimulatorErrors = {};
-
+function validateStep(step: Step, values: Values) {
+  const errors: Errors = {};
   if (step === 1) {
-    if (!values.studioName.trim()) {
-      errors.studioName = "Please enter your studio name.";
-    }
-
-    if (!values.budget.trim()) {
-      errors.budget = "Please provide your budget in GBP.";
-    } else {
-      const budget = Number(values.budget);
-      if (Number.isNaN(budget) || budget < 2000) {
-        errors.budget = "Budget should be at least GBP 2,000.";
-      }
-    }
-
-    if (!values.websiteType) {
-      errors.websiteType = "Please select a website type.";
+    if (!values.studioName.trim()) errors.studioName = "Please enter your studio or business name.";
+    if (!values.websitePurpose.trim()) errors.websitePurpose = "Please describe what the website is for.";
+    if (!values.hasExistingSite) errors.hasExistingSite = "Please tell us if you already have a website.";
+    if (values.hasExistingSite === "yes" && !values.currentWebsite.trim() && !values.improvementNotes.trim()) {
+      errors.currentWebsite = "Add a link or a short note so we know what is changing.";
     }
   }
-
-  if (step === 3) {
-    if (!values.brandReady) {
-      errors.brandReady = "Please confirm brand readiness.";
-    }
-    if (!values.copyReady) {
-      errors.copyReady = "Please confirm copy readiness.";
-    }
-    if (!values.urgency) {
-      errors.urgency = "Please select your preferred start urgency.";
+  if (step === 2) {
+    const budgetSnapshot = getBudgetSnapshot(values);
+    if (!values.budgetAmount.trim()) errors.budgetAmount = "Please enter your working budget.";
+    else if (!budgetSnapshot.convertedGbp || budgetSnapshot.convertedGbp < 1500) {
+      errors.budgetAmount = "Budget should convert to at least GBP 1,500 for planning.";
+    } else if (budgetSnapshot.convertedGbp > MAX_BUDGET_GBP) {
+      errors.budgetAmount = "For planning, the maximum supported budget is GBP 1,000,000 equivalent.";
     }
   }
-
+  if (step === 3 && !values.urgency) errors.urgency = "Please choose when you want the site live.";
   return errors;
 }
 
-function buildResult(values: SimulatorValues): SimulationResult {
-  const recommendation = getRecommendation(values);
-  const packageId = recommendation.packageId;
-  const totalDays = getTimelineDays(values, packageId);
-  const startDate = toStartOfDay();
-  const launchDate = addDays(startDate, totalDays);
-
-  return {
-    packageId,
-    totalDays,
-    startDate: formatDate(startDate),
-    launchDate: formatDate(launchDate),
-    reasons: buildWhyPackage(values, packageId, recommendation.complexityScore),
-    budgetAlignmentNote: recommendation.budgetAlignmentNote,
-    priorityNote:
-      values.urgency === "ASAP"
-        ? "Priority scheduling can accelerate approvals and review cadence. Timeline remains clamped to the 4-day minimum."
-        : "",
-    phases: buildPhases(totalDays, startDate),
-  };
-}
-
 export default function ProcessSimulatorClient() {
-  const [step, setStep] = useState(1);
-  const [values, setValues] = useState<SimulatorValues>(INITIAL_VALUES);
-  const [errors, setErrors] = useState<SimulatorErrors>({});
-  const [result, setResult] = useState<SimulationResult | null>(null);
-  const [direction, setDirection] = useState<TransitionDirection>("next");
-  const [transitionPhase, setTransitionPhase] = useState<TransitionPhase>("idle");
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const transitionTimeoutsRef = useRef<number[]>([]);
-  const isTransitioning = transitionPhase !== "idle";
+  const [values, setValues] = useState<Values>(INITIAL_VALUES);
+  const [errors, setErrors] = useState<Errors>({});
+  const [step, setStep] = useState<Step>(1);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const budgetSnapshot = useMemo(
+    () => getBudgetSnapshot(values),
+    [values.budgetAmount, values.selectedCurrency]
+  );
+  const result = useMemo(() => recommend(values, budgetSnapshot), [values, budgetSnapshot]);
+  const packageItem = result ? PACKAGE_MAP[result.packageId] : null;
 
-  const currentStepMeta = STEP_CONTENT[step - 1];
-
-  const clearTransitionTimers = () => {
-    transitionTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
-    transitionTimeoutsRef.current = [];
-  };
-
-  useEffect(() => {
-    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
-      return;
-    }
-
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const handleChange = () => {
-      setPrefersReducedMotion(mediaQuery.matches);
-    };
-
-    handleChange();
-    mediaQuery.addEventListener("change", handleChange);
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      clearTransitionTimers();
-    };
-  }, []);
-
-  const packagePreview = useMemo(() => {
-    if (!result) return null;
-    return PACKAGE_MAP[result.packageId];
-  }, [result]);
-
-  const parsedBudget = Number(values.budget);
-  const budgetLabel =
-    values.budget.trim() && !Number.isNaN(parsedBudget) && parsedBudget > 0
-      ? formatGBP(parsedBudget)
-      : "Not set";
-
-  const progressPercent = Math.round((step / STEP_CONTENT.length) * 100);
-
-  const previewPackage = useMemo(() => {
-    if (!values.websiteType || !values.budget.trim()) return null;
-    if (Number.isNaN(parsedBudget) || parsedBudget <= 0) return null;
-
-    const preview = getRecommendation(values);
-    return PACKAGE_MAP[preview.packageId];
-  }, [parsedBudget, values]);
-
-  const livePackage = packagePreview ?? previewPackage;
-  const liveTimelineDays = useMemo(() => {
-    if (!livePackage) return null;
-    return getTimelineDays(values, livePackage.id);
-  }, [livePackage, values]);
-
-  const liveSummary = [
-    { label: "Website type", value: values.websiteType || "Not selected" },
-    { label: "Pages", value: `${values.pages}` },
-    {
-      label: "Readiness",
-      value: `${values.brandReady === "yes" ? "Brand ready" : values.brandReady === "no" ? "Brand support needed" : "Brand pending"} | ${
-        values.copyReady === "yes" ? "Copy ready" : values.copyReady === "no" ? "Copy structuring needed" : "Copy pending"
-      }`,
-    },
-    {
-      label: "Add-ons",
-      value: values.addOns.length > 0 ? values.addOns.join(", ") : "None selected",
-    },
-    { label: "Budget", value: budgetLabel },
-    {
-      label: "Package",
-      value: livePackage ? `${livePackage.name} - ${livePackage.nickname}` : "Pending inputs",
-    },
-  ];
-
-  const updateValue = <K extends keyof SimulatorValues>(field: K, value: SimulatorValues[K]) => {
+  const updateValue = <K extends keyof Values>(field: K, value: Values[K]) => {
     setValues((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
-  const toggleAddOn = (addOn: AddOn) => {
-    setValues((prev) => ({
+  const handleBudgetAmountChange = (rawValue: string, currency: CurrencyCode) => {
+    const sanitized = sanitizeBudgetAmount(rawValue, currency);
+    setValues((prev) => ({ ...prev, budgetAmount: sanitized.value }));
+    setErrors((prev) => ({
       ...prev,
-      addOns: prev.addOns.includes(addOn)
-        ? prev.addOns.filter((item) => item !== addOn)
-        : [...prev.addOns, addOn],
+      budgetAmount: sanitized.capped
+        ? "For planning, the maximum supported budget is GBP 1,000,000 equivalent."
+        : "",
     }));
   };
 
-  const updatePages = (nextPages: number) => {
-    updateValue("pages", clamp(nextPages, 1, 40));
-  };
-
-  const transitionToStep = (
-    nextStep: number,
-    beforeStepChange?: () => void,
-    nextDirection: TransitionDirection = nextStep > step ? "next" : "prev"
-  ) => {
-    if (nextStep < 1 || nextStep > STEP_CONTENT.length || nextStep === step || isTransitioning) {
-      return;
-    }
-
-    const halfDuration = prefersReducedMotion ? REDUCED_FADE_MS : PAGE_TURN_HALF_MS;
-    clearTransitionTimers();
-    setDirection(nextDirection);
-    setTransitionPhase("out");
-
-    const outTimeout = window.setTimeout(() => {
-      beforeStepChange?.();
-      setStep(nextStep);
-      setTransitionPhase("in");
-
-      const inTimeout = window.setTimeout(() => {
-        setTransitionPhase("idle");
-      }, halfDuration);
-
-      transitionTimeoutsRef.current.push(inTimeout);
-    }, halfDuration);
-
-    transitionTimeoutsRef.current.push(outTimeout);
-  };
-
-  const goBack = () => {
-    if (step === 1 || isTransitioning) return;
-    transitionToStep(step - 1, undefined, "prev");
+  const toggleEnhancement = (item: Enhancement) => {
+    setValues((prev) => ({
+      ...prev,
+      enhancements: prev.enhancements.includes(item)
+        ? prev.enhancements.filter((entry) => entry !== item)
+        : [...prev.enhancements, item],
+    }));
   };
 
   const goNext = () => {
-    if (step >= 4 || isTransitioning) return;
-
-    const stepErrors = validateStep(step, values);
-    setErrors((prev) => ({ ...prev, ...stepErrors }));
-    if (Object.keys(stepErrors).length > 0) return;
-
-    if (step === 3) {
-      const computedResult = buildResult(values);
-      transitionToStep(4, () => {
-        setResult(computedResult);
-      }, "next");
-      return;
-    }
-
-    transitionToStep(step + 1, undefined, "next");
-  };
-
-  const reset = () => {
-    clearTransitionTimers();
+    if (step === 4) return;
+    const nextErrors = validateStep(step, values);
+    setErrors((prev) => ({ ...prev, ...nextErrors }));
+    if (Object.keys(nextErrors).length > 0) return;
     setDirection("next");
-    setTransitionPhase("idle");
-    setStep(1);
-    setValues(INITIAL_VALUES);
-    setErrors({});
-    setResult(null);
+    setStep((prev) => (prev + 1) as Step);
   };
 
-  const stepTransitionClass =
-    transitionPhase === "out"
-      ? direction === "next"
-        ? "simulator-page-out-next"
-        : "simulator-page-out-prev"
-      : transitionPhase === "in"
-        ? direction === "next"
-          ? "simulator-page-in-next"
-          : "simulator-page-in-prev"
-        : "simulator-page-idle";
+  const goBack = () => {
+    if (step === 1) return;
+    setDirection("prev");
+    setStep((prev) => (prev - 1) as Step);
+  };
+
+  const summary = {
+    packageLabel: packageItem?.name ?? "Pending",
+    timelineLabel: result ? `${result.estimatedDays} days` : "Add basics to preview",
+    pagesLabel: formatPageCountLabel(values.pages),
+    enhancementLabel: values.enhancements.length > 0 ? values.enhancements.join(", ") : "None selected",
+    budgetLabel: budgetSnapshot.enteredLabel,
+    planningBudgetLabel: budgetSnapshot.convertedGbp ? `Planning range used: ~${budgetSnapshot.planningLabel}` : budgetSnapshot.planningLabel,
+    nextStep: result ? result.nextStep : "Enter your goal, budget, and timing to unlock your launch estimate.",
+  };
+
+  const pageTurnClass = direction === "next" ? "simulator-page-in-next" : "simulator-page-in-prev";
 
   return (
-    <section className="simulator-shell simulator-shell-premium" aria-labelledby="timeline-simulator-title">
-      <Reveal>
-        <div className="simulator-top">
-          <header className="simulator-header simulator-hero">
-            <p className="simulator-kicker">Project Timeline</p>
-            <h1 id="timeline-simulator-title" className="simulator-title">
-              Plan a premium delivery track in minutes.
-            </h1>
-            <p className="simulator-hero-subline">
-              Shape scope, readiness, and pacing into a clear recommendation and launch window.
-            </p>
-          </header>
-          <div className="simulator-progress" aria-label="Progress indicator">
-            <div className="simulator-progress-meta">
-              <span>Step {step} of {STEP_CONTENT.length}</span>
-              <span>{progressPercent}% complete</span>
-            </div>
-            <div className="simulator-progress-track" role="presentation">
-              <div className="simulator-progress-fill" style={{ width: `${progressPercent}%` }} />
-            </div>
-            <p className="simulator-subtitle">
-              <span className="simulator-subtitle-strong">{currentStepMeta.label}</span>
-              <span aria-hidden="true"> / </span>
-              <span>{currentStepMeta.title}</span>
-            </p>
-          </div>
+    <section className="launch-estimator" aria-labelledby="launch-estimator-title">
+      <div className="launch-estimator-hero">
+        <div className="launch-estimator-intro">
+          <h1 id="launch-estimator-title" className="launch-estimator-title">Map out your launch before you apply with our projection simulator.</h1>
+          <p className="launch-estimator-copy">This estimator is designed to feel like the first draft of your launch plan, not a long generic form.</p>
         </div>
-      </Reveal>
-
-      <Reveal stagger={80}>
-        <ol className="simulator-stepper" aria-label="Simulator steps">
-          {STEP_CONTENT.map((stepMeta, index) => {
-            const current = index + 1;
-            return (
-              <li
-                key={stepMeta.label}
-                className={`simulator-step ${step === current ? "simulator-step-active" : ""} ${step > current ? "simulator-step-complete" : ""}`}
-                aria-current={step === current ? "step" : undefined}
-              >
-                <span className="simulator-step-index" aria-hidden="true">
-                  {current}
-                </span>
-                <span className="simulator-step-label">{stepMeta.label}</span>
-              </li>
-            );
-          })}
-        </ol>
-      </Reveal>
-
-      <div className="simulator-workbench">
-        <div className="simulator-stage">
-          <div className="simulator-page-turn-frame">
-            <div key={step} className={`simulator-step-content ${stepTransitionClass}`}>
-              <div className="simulator-question-block">
-                <p className="simulator-question-label">{step === 4 ? "Recommendation" : `Question ${step}`}</p>
-                <h2 className="simulator-question-title">{currentStepMeta.title}</h2>
-                <p className="simulator-question-support">{currentStepMeta.support}</p>
-              </div>
-              <div className="simulator-section-separator" aria-hidden="true" />
-
-            {step === 1 ? (
-              <div className="simulator-form-grid simulator-form-grid-split">
-                <div>
-                  <label htmlFor="sim-studio-name" className="form-label">
-                    Studio or practice name
-                  </label>
-                  <input
-                    id="sim-studio-name"
-                    className={`form-field simulator-field-lg ${errors.studioName ? "is-invalid" : ""}`}
-                    placeholder="Aster Interiors"
-                    value={values.studioName}
-                    onChange={(event) => updateValue("studioName", event.target.value)}
-                    aria-describedby={errors.studioName ? "sim-studio-error" : "sim-studio-helper"}
-                  />
-                  <p id="sim-studio-helper" className="simulator-hint">
-                    Used for your final recommendation summary.
-                  </p>
-                  {errors.studioName ? (
-                    <p id="sim-studio-error" className="simulator-hint simulator-hint-error">
-                      {errors.studioName}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div>
-                  <label htmlFor="sim-budget" className="form-label">
-                    Working budget
-                  </label>
-                  <div className={`currency-field simulator-field-lg ${errors.budget ? "is-invalid" : ""}`}>
-                    <span aria-hidden="true">GBP</span>
-                    <input
-                      id="sim-budget"
-                      className="currency-field-input"
-                      type="number"
-                      min={2000}
-                      step={100}
-                      placeholder="12000"
-                      value={values.budget}
-                      onChange={(event) => updateValue("budget", event.target.value)}
-                      aria-describedby={errors.budget ? "sim-budget-error" : "sim-budget-helper"}
-                    />
-                  </div>
-                  <p id="sim-budget-helper" className="simulator-hint">
-                    Numeric values only. This calibrates package fit.
-                  </p>
-                  {errors.budget ? (
-                    <p id="sim-budget-error" className="simulator-hint simulator-hint-error">
-                      {errors.budget}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div className="simulator-form-span">
-                  <p className="form-label">
-                    Website format
-                  </p>
-                  <div
-                    className="simulator-choice-grid"
-                    role="group"
-                    aria-label="Website format"
-                    aria-describedby={errors.websiteType ? "sim-type-error" : "sim-type-helper"}
-                  >
-                    {WEBSITE_TYPE_OPTIONS.map((option) => {
-                      const selected = values.websiteType === option.value;
-                      return (
-                        <button
-                          key={option.value}
-                          type="button"
-                          className={`simulator-choice-card ${selected ? "simulator-choice-card-active" : ""}`}
-                          onClick={() => updateValue("websiteType", option.value)}
-                          aria-pressed={selected}
-                        >
-                          <span className="simulator-choice-title">{option.title}</span>
-                          <span className="simulator-choice-copy">{option.detail}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p id="sim-type-helper" className="simulator-hint">
-                    Select the closest format. You can refine scope in the brief.
-                  </p>
-                  {errors.websiteType ? (
-                    <p id="sim-type-error" className="simulator-hint simulator-hint-error">
-                      {errors.websiteType}
-                    </p>
-                  ) : null}
-                </div>
-              </div>
-            ) : null}
-
-            {step === 2 ? (
-              <div className="simulator-form-grid">
-                <div className="simulator-pages-shell">
-                  <p className="form-label">Page count</p>
-                  <p className="simulator-pages-value">
-                    <span>{values.pages}</span> pages
-                  </p>
-                  <div className="simulator-pages-controls">
-                    <button
-                      type="button"
-                      className="simulator-stepper-button"
-                      onClick={() => updatePages(values.pages - 1)}
-                      aria-label="Decrease page count"
-                      disabled={values.pages <= 1}
-                    >
-                      -
-                    </button>
-                    <input
-                      type="range"
-                      className="simulator-slider"
-                      min={1}
-                      max={40}
-                      value={values.pages}
-                      onChange={(event) => updatePages(Number(event.target.value))}
-                      aria-label="Number of pages"
-                    />
-                    <button
-                      type="button"
-                      className="simulator-stepper-button"
-                      onClick={() => updatePages(values.pages + 1)}
-                      aria-label="Increase page count"
-                      disabled={values.pages >= 40}
-                    >
-                      +
-                    </button>
-                  </div>
-                  <p className="simulator-hint">Use the slider or stepper to model between 1 and 40 pages.</p>
-                </div>
-
-                <div>
-                  <p className="form-label">Enhancements</p>
-                  <div className="simulator-pill-grid" role="group" aria-label="Enhancements">
-                    {ADD_ONS.map((addOn) => {
-                      const checked = values.addOns.includes(addOn);
-                      return (
-                        <button
-                          key={addOn}
-                          type="button"
-                          className={`simulator-pill ${checked ? "simulator-pill-active" : ""}`}
-                          onClick={() => toggleAddOn(addOn)}
-                          aria-pressed={checked}
-                        >
-                          {addOn}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p className="simulator-hint">Select only features that must launch in this first phase.</p>
-                </div>
-              </div>
-            ) : null}
-
-            {step === 3 ? (
-              <div className="simulator-form-grid simulator-form-grid-split">
-                <div>
-                  <p className="form-label">
-                    Brand assets prepared
-                  </p>
-                  <div
-                    className={`simulator-toggle-grid ${errors.brandReady ? "simulator-toggle-grid-invalid" : ""}`}
-                    role="group"
-                    aria-label="Brand assets prepared"
-                    aria-describedby={errors.brandReady ? "sim-assets-error" : "sim-assets-helper"}
-                  >
-                    <button
-                      type="button"
-                      className={`simulator-toggle-card ${values.brandReady === "yes" ? "simulator-toggle-card-active" : ""}`}
-                      onClick={() => updateValue("brandReady", "yes")}
-                      aria-pressed={values.brandReady === "yes"}
-                    >
-                      <span className="simulator-toggle-title">Yes</span>
-                      <span className="simulator-toggle-copy">Brand assets are production-ready.</span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`simulator-toggle-card ${values.brandReady === "no" ? "simulator-toggle-card-active" : ""}`}
-                      onClick={() => updateValue("brandReady", "no")}
-                      aria-pressed={values.brandReady === "no"}
-                    >
-                      <span className="simulator-toggle-title">No</span>
-                      <span className="simulator-toggle-copy">Identity support should be included.</span>
-                    </button>
-                  </div>
-                  <p id="sim-assets-helper" className="simulator-hint">
-                    If not ready, identity support is added into scope.
-                  </p>
-                  {errors.brandReady ? (
-                    <p id="sim-assets-error" className="simulator-hint simulator-hint-error">
-                      {errors.brandReady}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div>
-                  <p className="form-label">
-                    Editorial copy prepared
-                  </p>
-                  <div
-                    className={`simulator-toggle-grid ${errors.copyReady ? "simulator-toggle-grid-invalid" : ""}`}
-                    role="group"
-                    aria-label="Editorial copy prepared"
-                    aria-describedby={errors.copyReady ? "sim-copy-error" : "sim-copy-helper"}
-                  >
-                    <button
-                      type="button"
-                      className={`simulator-toggle-card ${values.copyReady === "yes" ? "simulator-toggle-card-active" : ""}`}
-                      onClick={() => updateValue("copyReady", "yes")}
-                      aria-pressed={values.copyReady === "yes"}
-                    >
-                      <span className="simulator-toggle-title">Yes</span>
-                      <span className="simulator-toggle-copy">Copy is structured and ready for page builds.</span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`simulator-toggle-card ${values.copyReady === "no" ? "simulator-toggle-card-active" : ""}`}
-                      onClick={() => updateValue("copyReady", "no")}
-                      aria-pressed={values.copyReady === "no"}
-                    >
-                      <span className="simulator-toggle-title">No</span>
-                      <span className="simulator-toggle-copy">Content support should be included in delivery.</span>
-                    </button>
-                  </div>
-                  <p id="sim-copy-helper" className="simulator-hint">
-                    Copy readiness affects launch rhythm and review cycles.
-                  </p>
-                  {errors.copyReady ? (
-                    <p id="sim-copy-error" className="simulator-hint simulator-hint-error">
-                      {errors.copyReady}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div className="simulator-form-span">
-                  <p className="form-label">
-                    Desired start pace
-                  </p>
-                  <div
-                    className={`simulator-pill-grid simulator-pill-grid-wide ${errors.urgency ? "simulator-pill-grid-invalid" : ""}`}
-                    role="group"
-                    aria-label="Desired start pace"
-                    aria-describedby={errors.urgency ? "sim-urgency-error" : "sim-urgency-helper"}
-                  >
-                    {URGENCY_OPTIONS.map((urgency) => {
-                      const selected = values.urgency === urgency;
-                      return (
-                        <button
-                          key={urgency}
-                          type="button"
-                          className={`simulator-pill ${selected ? "simulator-pill-active" : ""}`}
-                          onClick={() => updateValue("urgency", urgency)}
-                          aria-pressed={selected}
-                        >
-                          {urgency}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p id="sim-urgency-helper" className="simulator-hint">
-                    Pace helps prioritize scheduling without changing recommendation tier logic.
-                  </p>
-                  {errors.urgency ? (
-                    <p id="sim-urgency-error" className="simulator-hint simulator-hint-error">
-                      {errors.urgency}
-                    </p>
-                  ) : null}
-                </div>
-              </div>
-            ) : null}
-
-            {step === 4 && result && packagePreview ? (
-              <div className="simulator-result" aria-live="polite">
-                <div className="simulator-summary simulator-decision-card">
-                  <p className="simulator-decision-kicker">Decision card</p>
-                  <p className="simulator-package-title">{packagePreview.name} - {packagePreview.nickname}</p>
-                  <p className="simulator-note">
-                    {formatGBP(packagePreview.deposit)} deposit + {formatGBP(packagePreview.monthly)}/mo
-                  </p>
-                  {result.budgetAlignmentNote ? <p className="simulator-note">{result.budgetAlignmentNote}</p> : null}
-                  <ul className="list-soft">
-                    {result.reasons.map((reason) => (
-                      <li key={reason}>{reason}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="simulator-summary">
-                  <p className="simulator-duration">Estimated production window: {result.totalDays} days</p>
-                  <p className="simulator-note">
-                    Projected start: {result.startDate} <br />
-                    Projected launch: {result.launchDate}
-                  </p>
-                  {result.priorityNote ? <p className="simulator-rush">{result.priorityNote}</p> : null}
-                </div>
-
-                <div className="simulator-timeline">
-                  <div className="simulator-timeline-head">
-                    <span>{`Day 1 -> Day ${result.totalDays}`}</span>
-                    <span>Launch {result.launchDate}</span>
-                  </div>
-                  <div className="simulator-timeline-bar" role="presentation">
-                    {result.phases.map((phase) => (
-                      <div
-                        key={`${phase.title}-segment`}
-                        className="simulator-timeline-segment"
-                        style={{ flexGrow: Math.max(1, phase.endDay - phase.startDay + 1) }}
-                      >
-                        <span>{phase.title}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <ol className="simulator-phase-list">
-                  {result.phases.map((phase) => (
-                    <li key={phase.title} className="simulator-phase-item">
-                      <div className="simulator-phase-head">
-                        <p className="simulator-phase-title">{phase.title}</p>
-                        <span className="simulator-phase-date">{phase.dayRange}</span>
-                      </div>
-                      <p className="simulator-note">{phase.dateRange}</p>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            ) : null}
-            </div>
-          </div>
+        <div className="launch-estimator-hero-panel">
+          <span className="launch-estimator-panel-label">What this gives you</span>
+          <p>A clearer package fit, a realistic time-to-launch estimate, and the next step we would recommend today.</p>
         </div>
-
-        <aside className="simulator-live-summary" aria-label="Live summary">
-          <p className="simulator-live-kicker">Live summary</p>
-          <h2 className="simulator-live-title">Scope snapshot</h2>
-          <p className="simulator-live-caption">Updated in real time as each answer changes.</p>
-          {values.studioName.trim() ? <p className="simulator-live-studio">{values.studioName.trim()}</p> : null}
-          <dl className="simulator-live-list">
-            {liveSummary.map((item) => (
-              <div key={item.label} className="simulator-live-item">
-                <dt>{item.label}</dt>
-                <dd>{item.value}</dd>
-              </div>
-            ))}
-          </dl>
-          {livePackage ? (
-            <div className="simulator-live-highlight">
-              <p className="simulator-live-price">
-                {formatGBP(livePackage.deposit)} deposit + {formatGBP(livePackage.monthly)}/mo
-              </p>
-              {liveTimelineDays ? <p className="simulator-live-meta">Estimated production window: {liveTimelineDays} days</p> : null}
-            </div>
-          ) : (
-            <p className="simulator-live-meta">Complete the first question to preview package fit.</p>
-          )}
-        </aside>
       </div>
 
-      <div className={`simulator-actions ${step === 4 ? "simulator-actions-split" : ""}`}>
-        {step > 1 ? (
-          <Button type="button" variant="secondary" onClick={goBack} disabled={isTransitioning}>
-            Previous
-          </Button>
-        ) : null}
-        {step < 4 ? (
-          <Button type="button" onClick={goNext} disabled={isTransitioning}>
-            {step === 3 ? "View recommendation" : "Continue"}
-          </Button>
-        ) : (
-          <Button type="button" variant="ghost" onClick={reset}>
-            Start over
-          </Button>
-        )}
+      <div className="launch-estimator-layout">
+        <div className="launch-estimator-main">
+          <ol className="simulator-stepper launch-stepper" aria-label="Estimator steps">
+            {STEPS.map((item) => (
+              <li key={item.id} className={`simulator-step ${step === item.id ? "simulator-step-active" : ""} ${step > item.id ? "simulator-step-complete" : ""}`} aria-current={step === item.id ? "step" : undefined}>
+                <span className="simulator-step-index" aria-hidden="true">{item.id}</span>
+                <span className="simulator-step-label">{item.label}</span>
+              </li>
+            ))}
+          </ol>
+
+          <div className="simulator-page-turn-frame">
+            <div key={step} className={`simulator-step-content ${pageTurnClass}`}>
+              {step === 1 ? (
+                <section className="launch-section">
+                  <div className="launch-section-head"><p className="launch-section-kicker">01. The brief</p><h2 className="launch-section-title">{STEPS[0].title}</h2></div>
+                  <div className="launch-field-grid">
+                    <div>
+                      <label htmlFor="estimator-studio" className="form-label">Studio or business name</label>
+                      <input id="estimator-studio" className={`form-field ${errors.studioName ? "is-invalid" : ""}`} value={values.studioName} onChange={(e) => updateValue("studioName", e.target.value)} placeholder="e.g. John Doe Studio" />
+                      {errors.studioName ? <p className="form-error">{errors.studioName}</p> : null}
+                    </div>
+                    <div className="launch-field-span">
+                      <label htmlFor="estimator-purpose" className="form-label">What is this website for?</label>
+                      <textarea id="estimator-purpose" className={`form-field form-textarea launch-purpose-field ${errors.websitePurpose ? "is-invalid" : ""}`} value={values.websitePurpose} onChange={(e) => updateValue("websitePurpose", e.target.value)} placeholder="Describe the goal of the site, what it needs to help your business do, and what a successful launch would feel like." />
+                      {errors.websitePurpose ? <p className="form-error">{errors.websitePurpose}</p> : null}
+                    </div>
+                    <div className="launch-field-span">
+                      <p className="form-label">Do you already have a current or previous website?</p>
+                      <div className={`launch-toggle-row ${errors.hasExistingSite ? "launch-toggle-row-invalid" : ""}`}>
+                        {READY_OPTIONS.map((option) => {
+                          const selected = values.hasExistingSite === option.value;
+                          return (
+                            <button key={option.value} type="button" className={`launch-toggle-card ${selected ? "launch-toggle-card-active" : ""}`} onClick={() => updateValue("hasExistingSite", option.value)} aria-pressed={selected}>
+                              <span className="launch-toggle-title">{option.label}</span>
+                              <span className="launch-toggle-copy">{option.value === "yes" ? "We can factor migration and improvements into the plan." : "We can plan for a cleaner first-time launch."}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {errors.hasExistingSite ? <p className="form-error">{errors.hasExistingSite}</p> : null}
+                    </div>
+                    {values.hasExistingSite === "yes" ? (
+                      <>
+                        <div>
+                          <label htmlFor="estimator-current-site" className="form-label">Current website link</label>
+                          <input id="estimator-current-site" className={`form-field ${errors.currentWebsite ? "is-invalid" : ""}`} value={values.currentWebsite} onChange={(e) => updateValue("currentWebsite", e.target.value)} placeholder="https://yourcurrentwebsite.com" />
+                        </div>
+                        <div>
+                          <label htmlFor="estimator-improvements" className="form-label">What do you want improved?</label>
+                          <textarea id="estimator-improvements" className={`form-field launch-notes-field ${errors.currentWebsite ? "is-invalid" : ""}`} value={values.improvementNotes} onChange={(e) => updateValue("improvementNotes", e.target.value)} placeholder="A short note about what needs to improve." />
+                        </div>
+                        {errors.currentWebsite ? <p className="form-error launch-field-span">{errors.currentWebsite}</p> : null}
+                      </>
+                    ) : null}
+                  </div>
+                </section>
+              ) : null}
+
+              {step === 2 ? (
+                <section className="launch-section">
+                  <div className="launch-section-head"><p className="launch-section-kicker">02. Scope & Features</p><h2 className="launch-section-title">{STEPS[1].title}</h2></div>
+                  <div className="launch-scope-grid">
+                    <div className="launch-pages-card">
+                      <p className="form-label">Pages needed at launch</p>
+                      <p className="launch-pages-value"><span>{formatPageCountValue(values.pages)}</span> page{values.pages === 1 ? "" : "s"}</p>
+                      <input type="range" className="simulator-slider" min={1} max={20} value={values.pages} onChange={(e) => updateValue("pages", Number(e.target.value))} aria-label="Pages needed at launch" />
+                      <div className="launch-pages-guides" aria-hidden="true"><span>3 pages</span><span>8 pages</span><span>20+ pages</span></div>
+                      <p className="launch-pages-note">Entry is structured for 3 pages, Mid for 8 pages, and Top for 20+ pages.</p>
+                    </div>
+                    <div className="launch-budget-card">
+                      <div className="launch-budget-toolbar">
+                        <label htmlFor="estimator-budget" className="form-label">Working budget</label>
+                        <div className="launch-budget-currency">
+                          <label htmlFor="estimator-currency" className="form-label">Select currency</label>
+                          <select
+                            id="estimator-currency"
+                            className="form-field form-select launch-currency-select"
+                            value={values.selectedCurrency}
+                            onChange={(e) => {
+                              const nextCurrency = e.target.value as CurrencyCode;
+                              const sanitized = sanitizeBudgetAmount(values.budgetAmount, nextCurrency);
+                              setValues((prev) => ({
+                                ...prev,
+                                selectedCurrency: nextCurrency,
+                                budgetAmount: sanitized.value,
+                              }));
+                              setErrors((prev) => ({
+                                ...prev,
+                                selectedCurrency: "",
+                                budgetAmount: sanitized.capped
+                                  ? "For planning, the maximum supported budget is GBP 1,000,000 equivalent."
+                                  : "",
+                              }));
+                            }}
+                          >
+                            {CURRENCIES.map((item) => (
+                              <option key={item.code} value={item.code}>{item.code}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className={`currency-field ${errors.budgetAmount ? "is-invalid" : ""}`}>
+                        <span aria-hidden="true">{values.selectedCurrency}</span>
+                        <input
+                          id="estimator-budget"
+                          className="currency-field-input"
+                          type="number"
+                          min={0}
+                          step={100}
+                          max={getMaxBudgetForCurrency(values.selectedCurrency)}
+                          placeholder={currencyConfig(values.selectedCurrency).example}
+                          value={values.budgetAmount}
+                          onChange={(e) => handleBudgetAmountChange(e.target.value, values.selectedCurrency)}
+                        />
+                      </div>
+                      {errors.budgetAmount ? <p className="form-error">{errors.budgetAmount}</p> : null}
+                      <p className="launch-budget-note">We&apos;ll convert this to our GBP planning range behind the scenes.</p>
+                      {budgetSnapshot.convertedGbp ? (
+                        <p className="launch-budget-converted">Planning range used: ~{budgetSnapshot.planningLabel}</p>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="launch-enhancement-grid">
+                    {ENHANCEMENTS.map(([item, , , detail]) => {
+                      const selected = values.enhancements.includes(item);
+                      return (
+                        <button key={item} type="button" className={`launch-enhancement-card ${selected ? "launch-enhancement-card-active" : ""}`} onClick={() => toggleEnhancement(item)} aria-pressed={selected}>
+                          <span className="launch-enhancement-title">{item}</span>
+                          <span className="launch-enhancement-copy">{detail}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </section>
+              ) : null}
+
+              {step === 3 ? (
+                <section className="launch-section">
+                  <div className="launch-section-head"><p className="launch-section-kicker">03. Timing & Readiness</p><h2 className="launch-section-title">{STEPS[2].title}</h2></div>
+                  <div className="launch-field-grid">
+                    <div className="launch-field-span">
+                      <p className="form-label">When do you want the site live?</p>
+                      <div className={`launch-urgency-grid ${errors.urgency ? "launch-toggle-row-invalid" : ""}`}>
+                        {URGENCY_OPTIONS.map((option) => {
+                          const selected = values.urgency === option.value;
+                          return (
+                            <button key={option.value} type="button" className={`launch-urgency-card ${selected ? "launch-urgency-card-active" : ""}`} onClick={() => updateValue("urgency", option.value)} aria-pressed={selected}>
+                              <span className="launch-toggle-title">{option.value}</span>
+                              <span className="launch-toggle-copy">{option.detail}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {errors.urgency ? <p className="form-error">{errors.urgency}</p> : null}
+                    </div>
+                    <div>
+                      <p className="form-label">Brand assets ready?</p>
+                      <div className="launch-toggle-row">
+                        {READY_OPTIONS.map((option) => {
+                          const selected = values.brandReady === option.value;
+                          return (
+                            <button key={`brand-${option.value}`} type="button" className={`launch-toggle-card ${selected ? "launch-toggle-card-active" : ""}`} onClick={() => updateValue("brandReady", option.value)} aria-pressed={selected}>
+                              <span className="launch-toggle-title">{option.label}</span>
+                              <span className="launch-toggle-copy">{option.detail}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="form-label">Copy ready?</p>
+                      <div className="launch-toggle-row">
+                        {READY_OPTIONS.map((option) => {
+                          const selected = values.copyReady === option.value;
+                          return (
+                            <button key={`copy-${option.value}`} type="button" className={`launch-toggle-card ${selected ? "launch-toggle-card-active" : ""}`} onClick={() => updateValue("copyReady", option.value)} aria-pressed={selected}>
+                              <span className="launch-toggle-title">{option.label}</span>
+                              <span className="launch-toggle-copy">{option.detail}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              ) : null}
+
+              {step === 4 ? (
+                <section className="launch-result-shell" aria-live="polite">
+                  {result && packageItem ? (
+                    <>
+                      <div className="launch-result-hero">
+                        <p className="launch-result-kicker">Live estimate</p>
+                        <h2 className="launch-result-headline">{result.headline}</h2>
+                        <p className="launch-result-copy">Projected live date if you apply now: <strong>{result.projectedDate}</strong></p>
+                      </div>
+                      <div className="launch-result-grid">
+                        <div className="launch-result-card">
+                          <p className="launch-result-label">Recommendation</p>
+                          <p className="launch-result-recommendation">
+                            Based on your choices, we recommend <span>{packageItem.name}</span>.
+                          </p>
+                          <p className="launch-result-price">{getPackagePricing(packageItem).primary}</p>
+                          {getPackagePricing(packageItem).secondary ? <p className="launch-result-meta">{getPackagePricing(packageItem).secondary}</p> : null}
+                          <p className="launch-result-meta">Typical package timeline: {packageItem.timeline}</p>
+                          <p className="launch-result-copy">{result.explanation}</p>
+                          {result.budgetNote ? <p className="launch-result-budget-note">{result.budgetNote}</p> : null}
+                          <ul className="launch-result-list">{packageItem.includes.map((item) => <li key={item}>{item}</li>)}</ul>
+                        </div>
+                        <div className="launch-result-card">
+                          <p className="launch-result-label">Why this fits</p>
+                          <ul className="launch-result-list">
+                            <li>{formatPageCountLabel(values.pages)} are currently planned for launch.</li>
+                            <li>{values.enhancements.length > 0 ? `${values.enhancements.length} enhancement${values.enhancements.length === 1 ? "" : "s"} add build depth.` : "No extra enhancements are selected yet."}</li>
+                            <li>{values.hasExistingSite === "yes" ? "Migration and improvement work add complexity." : "A fresh launch path keeps migration complexity lower."}</li>
+                            <li>We are planning around ~{formatGBP(result.budgetGbp)} GBP behind the scenes.</li>
+                          </ul>
+                          <p className="launch-result-next-step">{result.nextStep}</p>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="launch-result-placeholder">
+                      <p className="launch-result-kicker">Live estimate</p>
+                      <h2 className="launch-result-headline">Add your website goal, budget, and timing to unlock your launch estimate.</h2>
+                      <p className="launch-result-copy">Once those basics are in place, we will show the package fit, time-to-launch estimate, and the clearest next step.</p>
+                    </div>
+                  )}
+                </section>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="launch-step-actions">
+            {step > 1 ? <Button type="button" variant="secondary" onClick={goBack}>Previous</Button> : <span />}
+            {step < 4 ? <Button type="button" onClick={goNext}>Continue</Button> : <Button href="/contact">Start your application</Button>}
+          </div>
+        </div>
+
+        <aside className="launch-summary" aria-label="Live summary">
+          <p className="launch-summary-kicker">Live summary</p>
+          <div className="launch-summary-stack">
+            <div className="launch-summary-item"><span>Package</span><strong>{summary.packageLabel}</strong></div>
+            <div className="launch-summary-item"><span>Estimated time to launch</span><strong>{summary.timelineLabel}</strong></div>
+            <div className="launch-summary-item"><span>Pages</span><strong>{summary.pagesLabel}</strong></div>
+            <div className="launch-summary-item"><span>Key enhancements</span><strong>{summary.enhancementLabel}</strong></div>
+            <div className="launch-summary-item"><span>Budget entered</span><strong>{summary.budgetLabel}</strong><small className="launch-summary-note">{summary.planningBudgetLabel}</small></div>
+            <div className="launch-summary-item"><span>Next step</span><strong>{summary.nextStep}</strong></div>
+          </div>
+          {packageItem ? (
+            <article className="launch-summary-package">
+              <p className="launch-summary-package-name">{packageItem.name}</p>
+              <p className="launch-summary-package-price">{getPackagePricing(packageItem).primary}</p>
+              {getPackagePricing(packageItem).secondary ? <p className="launch-summary-package-meta">{getPackagePricing(packageItem).secondary}</p> : null}
+            </article>
+          ) : null}
+        </aside>
       </div>
     </section>
   );
 }
-

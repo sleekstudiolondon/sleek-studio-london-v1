@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
+import { PACKAGES, getPackagePricing } from '../../lib/pricing'
 
 const services = [
   {
@@ -43,38 +44,6 @@ const services = [
       'We optimize your site for high-intent searches and refine local signals for London-based clients.',
     deliverables: ['On-page SEO', 'Local optimization', 'Content planning'],
     outcome: 'Great for steady lead flow in 6-12 months.'
-  }
-]
-
-const packages = [
-  {
-    name: 'Entry',
-    price: '£2,000 initial + from £999/mo',
-    bestFor: 'Studios launching a focused premium website.',
-    timeline: '4-6 days',
-    includes: ['Brand audit', 'Light site refresh', 'Content direction']
-  },
-  {
-    name: 'Mid',
-    price: '£12,000 initial + from £7,000/mo',
-    bestFor: 'Studios handling medium complexity and wider scope.',
-    timeline: '6-8 days',
-    includes: ['Brand strategy', 'Luxury website', 'SEO foundations'],
-    featured: true
-  },
-  {
-    name: 'Top',
-    price: '£25,000 initial + from £15,000/mo',
-    bestFor: 'Complex ecommerce or multi-location execution.',
-    timeline: '4-7 days',
-    includes: ['Full identity system', 'Editorial site build', 'Content templates']
-  },
-  {
-    name: 'Top Plus',
-    price: '£25,000 initial + from £15,000/mo',
-    bestFor: 'Studios requiring priority scheduling and concierge handling.',
-    timeline: '4-10 days',
-    includes: ['Positioning refresh', 'Multi-page web build', 'Launch campaign']
   }
 ]
 
@@ -249,11 +218,10 @@ export default function ServicesPage() {
       <section className="services-hero mt-10">
         <p className="eyebrow text-white/70">Services</p>
         <h1 className="font-serif text-4xl sm:text-5xl mb-4">
-          Luxury marketing services for interior designers.
+          Choose the support level that fits your launch.
         </h1>
         <p className="text-neutral-200/90 max-w-2xl">
-          We combine refined brand strategy with calm digital craftsmanship to position your studio
-          for premium, design-led clients.
+          Shape the mix, picture the timeline, and see how the right package supports your website going live with confidence.
         </p>
       </section>
 
@@ -462,27 +430,31 @@ export default function ServicesPage() {
         <div className="decorative-block decor-block-right" />
         <h2 className="font-serif text-3xl mb-8">Packages</h2>
         <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-8">
-          {packages.map(pkg => (
-            <div
-              key={pkg.name}
-              className={`package-card ${pkg.featured ? 'package-highlight' : ''}`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-serif text-xl">{pkg.name}</h3>
-                {pkg.featured && <span className="badge">Most Popular</span>}
+          {PACKAGES.map(pkg => {
+            const pricing = getPackagePricing(pkg)
+
+            return (
+              <div
+                key={pkg.name}
+                className={`package-card ${pkg.id === 'mid' ? 'package-highlight' : ''}`}
+              >
+                <div className="flex items-center justify-between mb-2 gap-3">
+                  <h3 className="font-serif text-xl">{pkg.name}</h3>
+                </div>
+                <p className="mb-1">{pricing.primary}</p>
+                {pricing.secondary ? <p className="text-sm text-neutral-500 mb-1">{pricing.secondary}</p> : null}
+                <p className="text-sm text-neutral-500 mb-3">Timeline: {pkg.timeline}</p>
+                <p className="text-sm text-neutral-600 mb-4">
+                  {pkg.intendedFor}
+                </p>
+                <ul className="text-sm text-neutral-600">
+                  {pkg.includes.map(item => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
               </div>
-              <p className="mb-1">{pkg.price}</p>
-              <p className="text-sm text-neutral-500 mb-3">Timeline: {pkg.timeline}</p>
-              <p className="text-sm text-neutral-600 mb-4">
-                {pkg.bestFor}
-              </p>
-              <ul className="text-sm text-neutral-600">
-                {pkg.includes.map(item => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </section>
     </main>

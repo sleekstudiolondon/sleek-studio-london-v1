@@ -5,7 +5,7 @@ describe('Work case study navigation', () => {
   it('renders case study cards as links to slug pages', () => {
     render(<WorkClient />)
 
-    const mayfairLink = screen.getByRole('link', { name: /read case study: mayfair townhouse/i })
+    const mayfairLink = screen.getAllByRole('link', { name: /view case study/i })[0]
     expect(mayfairLink).toHaveAttribute('href', '/work/mayfair-townhouse')
   })
 })

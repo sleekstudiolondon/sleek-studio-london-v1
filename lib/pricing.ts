@@ -5,8 +5,10 @@ export type StudioPackage = {
   name: string;
   nickname: string;
   minBudget: number;
-  deposit: number;
-  monthly: number;
+  deposit: number | null;
+  monthly: number | null;
+  isInviteOnly?: boolean;
+  pageCount: number;
   intendedFor: string;
   timeline: string;
   description: string;
@@ -18,48 +20,60 @@ export const PACKAGES: StudioPackage[] = [
     id: "entry",
     name: "Entry",
     nickname: "The Edit",
-    minBudget: 5000,
-    deposit: 2000,
-    monthly: 999,
-    intendedFor: "Studios launching a focused site with core assets already prepared.",
+    minBudget: 1500,
+    deposit: 1499,
+    monthly: 749,
+    pageCount: 3,
+    intendedFor: "Focused launches for studios that need a refined site live without overbuilding the first phase.",
     timeline: "4-6 days",
-    description: "A concise, design-led launch with disciplined structure and polished delivery.",
+    description: "A streamlined premium build with the essentials covered, so you can launch clearly and confidently.",
     includes: [
-      "Core website architecture and page planning",
-      "Editorial visual polish with responsive build",
-      "QA, launch support, and handover guidance",
+      "3 pages",
+      "Hosting",
+      "Domain name",
+      "2 modifications per week after launch",
     ],
   },
   {
     id: "mid",
     name: "Mid",
     nickname: "The House",
-    minBudget: 15000,
-    deposit: 12000,
-    monthly: 7000,
-    intendedFor: "Growing studios with broader page scope or partial readiness.",
-    timeline: "6-8 days",
-    description: "A deeper programme with added production support and tighter strategic control.",
+    minBudget: 5000,
+    deposit: 4599,
+    monthly: 2999,
+    pageCount: 8,
+    intendedFor: "Serious business launches with stronger conversion goals, broader scope, and room to grow after go-live.",
+    timeline: "7-10 days",
+    description: "A fuller build path with more support, more flexibility, and a stronger runway for business growth.",
     includes: [
-      "Expanded page templates and conversion structure",
-      "Integrated content and brand-readiness support",
-      "Priority revisions through the launch window",
+      "8 pages",
+      "Hosting",
+      "Domain name",
+      "5 modifications per week after launch",
+      "Expanded content structure",
+      "Priority feedback windows",
     ],
   },
   {
     id: "top",
     name: "Top",
     nickname: "White-Glove",
-    minBudget: 35000,
-    deposit: 25000,
-    monthly: 15000,
-    intendedFor: "High-complexity builds including ecommerce, multi-location, or compressed timelines.",
-    timeline: "4-7 days",
-    description: "End-to-end delivery with concierge oversight, priority scheduling, and executive pace.",
+    minBudget: 20000,
+    deposit: null,
+    monthly: null,
+    isInviteOnly: true,
+    pageCount: 20,
+    intendedFor: "High-complexity, premium, or fast-moving launches that need white-glove execution and concierge oversight.",
+    timeline: "12-18 days",
+    description: "Our most tailored route for ambitious launches where complexity, pace, and polish all need to stay elevated.",
     includes: [
-      "Complex architecture and implementation handling",
-      "Priority scheduling and daily delivery cadence",
-      "Concierge support across design, build, QA, and launch",
+      "20 pages",
+      "Hosting",
+      "Domain name",
+      "20 modifications per week after launch",
+      "Priority scheduling",
+      "Migration and systems planning",
+      "Concierge launch support",
     ],
   },
 ];
@@ -71,10 +85,10 @@ export const PACKAGE_MAP: Record<PackageId, StudioPackage> = {
 };
 
 export const CONTACT_BUDGET_OPTIONS = [
-  "\u00A32,000-\u00A37,999",
-  "\u00A38,000-\u00A314,999",
-  "\u00A315,000-\u00A324,999",
-  "\u00A325,000+",
+  "\u00A31,500-\u00A34,999",
+  "\u00A35,000-\u00A39,999",
+  "\u00A310,000-\u00A319,999",
+  "\u00A320,000+",
   "Not sure",
 ] as const;
 
@@ -84,4 +98,18 @@ export function formatGBP(value: number) {
     currency: "GBP",
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+export function getPackagePricing(packageItem: StudioPackage) {
+  if (packageItem.isInviteOnly) {
+    return {
+      primary: "Invite Only",
+      secondary: "",
+    };
+  }
+
+  return {
+    primary: `${formatGBP(packageItem.deposit ?? 0)} initial deposit`,
+    secondary: `${formatGBP(packageItem.monthly ?? 0)} monthly`,
+  };
 }

@@ -18,7 +18,6 @@ type EnquiryPayload = {
   phone?: string
   website?: string
   studio?: string
-  projectType?: string
   timeline?: string
   budgetRange?: string
   preferredContact?: string
@@ -94,7 +93,6 @@ const buildTextBody = (payload: EnquiryPayload) => {
     `Website: ${sanitize(payload.website) || 'Not provided'}`,
     `Studio: ${sanitize(payload.studio) || 'Not provided'}`,
     `Selected plan: ${sanitize(payload.selectedPlanName) || sanitize(payload.selectedPlanId) || 'Not provided'}`,
-    `Project type: ${sanitize(payload.projectType) || 'Not provided'}`,
     `Timeline: ${sanitize(payload.timeline) || 'Not provided'}`,
     `Budget range: ${sanitize(payload.budgetRange) || 'Not provided'}`,
     `Brand assets available: ${sanitize(payload.brandAssets) || 'Not provided'}`,
@@ -123,17 +121,16 @@ export async function POST(req: Request) {
 
   const name = sanitize(payload.name)
   const email = sanitize(payload.email)
-  const projectType = sanitize(payload.projectType)
   const timeline = sanitize(payload.timeline)
   const budgetRange = sanitize(payload.budgetRange)
   const preferredContact = sanitize(payload.preferredContact)
   const message = sanitize(payload.message)
 
-  if (!name || !email || !projectType || !timeline || !budgetRange || !preferredContact || !message) {
+  if (!name || !email || !timeline || !budgetRange || !preferredContact || !message) {
     return NextResponse.json(
       {
         ok: false,
-        error: 'Name, email, project type, timeline, budget range, preferred contact method, and message are required.'
+        error: 'Name, email, timeline, budget range, preferred contact method, and message are required.'
       },
       { status: 400 }
     )
@@ -162,7 +159,6 @@ export async function POST(req: Request) {
         ...payload,
         name,
         email,
-        projectType,
         timeline,
         budgetRange,
         preferredContact,

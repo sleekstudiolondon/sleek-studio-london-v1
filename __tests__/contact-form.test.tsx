@@ -9,7 +9,7 @@ describe('Contact form validation', () => {
 
     expect(screen.getByText(/please enter your name/i)).toBeInTheDocument()
     expect(screen.getByText(/please enter your email address/i)).toBeInTheDocument()
-    expect(screen.getByText(/please select a website type/i)).toBeInTheDocument()
+    expect(screen.getByText(/please select your preferred start window/i)).toBeInTheDocument()
     expect(screen.getByText(/please select a project budget/i)).toBeInTheDocument()
     expect(screen.getByText(/please select a preferred contact method/i)).toBeInTheDocument()
     expect(screen.getByText(/please share a brief project outline/i)).toBeInTheDocument()

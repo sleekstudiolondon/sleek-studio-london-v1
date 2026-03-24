@@ -25,6 +25,19 @@ const CREDIBILITY = [
   },
 ];
 
+const SOCIALS = [
+  {
+    label: "Instagram",
+    href: "https://instagram.com/sleekstudiolondon",
+    handle: "@sleekstudiolondon",
+  },
+  {
+    label: "TikTok",
+    href: "https://tiktok.com/@sleekstudiolondon",
+    handle: "@sleekstudiolondon",
+  },
+];
+
 export default function AboutPage() {
   return (
     <PageShell
@@ -68,6 +81,23 @@ export default function AboutPage() {
           Our approach combines strategic structure, premium design detail, and disciplined engineering delivery. The
           process stays transparent and collaborative, with enough rigor to protect quality at every stage.
         </p>
+        <div className="about-social-block" aria-label="Follow Sleek Studio London">
+          <p className="about-social-label">Follow Sleek Studio London</p>
+          <div className="about-social-row">
+            {SOCIALS.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noreferrer"
+                className="about-social-link"
+              >
+                <span>{item.label}</span>
+                <strong>{item.handle}</strong>
+              </a>
+            ))}
+          </div>
+        </div>
         <div className="button-row">
           <Button href="/contact">Apply now</Button>
         </div>
