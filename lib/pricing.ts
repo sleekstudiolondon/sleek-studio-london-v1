@@ -103,7 +103,7 @@ export function formatGBP(value: number) {
 export function getPackagePricing(packageItem: StudioPackage) {
   if (packageItem.isInviteOnly) {
     return {
-      primary: "Invite Only",
+      primary: "Invite only",
       secondary: "",
     };
   }

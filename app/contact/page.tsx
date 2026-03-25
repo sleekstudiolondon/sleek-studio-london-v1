@@ -69,11 +69,13 @@ export default function ContactPage() {
           </aside>
 
           <div className="contact-premium-form-shell">
-            <Kicker>Concierge application</Kicker>
-            <h2 className="section-title">Apply for your project.</h2>
-            <p className="contact-premium-lead">
-              Share your scope and preferred start window. We will come back with the clearest package fit and next step for launch.
-            </p>
+            <div className="contact-form-intro">
+              <Kicker className="contact-form-shell-kicker">Concierge application</Kicker>
+              <h2 className="section-title contact-form-shell-title">Apply for your project.</h2>
+              <p className="contact-premium-lead contact-form-shell-lead">
+                Share your scope and preferred start window. We will come back with the clearest package fit and next step for launch.
+              </p>
+            </div>
             <ContactClient />
           </div>
         </div>

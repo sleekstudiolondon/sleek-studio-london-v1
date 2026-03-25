@@ -22,6 +22,17 @@ type ContactFormValues = {
 
 type ContactFormErrors = Partial<Record<keyof ContactFormValues, string>>;
 
+type SubmittedEnquirySnapshot = {
+  selectedPlanName: string;
+  name: string;
+  email: string;
+  preferredContact: string;
+  timeline: string;
+  budgetRange: string;
+  studio: string;
+  website: string;
+};
+
 const initialValues: ContactFormValues = {
   selectedPlanId: "entry",
   name: "",
@@ -68,6 +79,7 @@ export default function ContactClient() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submittedSnapshot, setSubmittedSnapshot] = useState<SubmittedEnquirySnapshot | null>(null);
   const [expandedPlans, setExpandedPlans] = useState<Partial<Record<PackageId, boolean>>>({});
   const lastSubmitAtRef = useRef(0);
 
@@ -97,6 +109,7 @@ export default function ContactClient() {
     setErrors({});
     setSubmitError("");
     setSubmitted(false);
+    setSubmittedSnapshot(null);
     setExpandedPlans({});
   };
 
@@ -155,24 +168,81 @@ export default function ContactClient() {
       }
 
       if (!response.ok || !data?.ok) {
-        setSubmitError(data?.error || "Unable to submit your enquiry right now.");
+        setSubmitError("Something went wrong. Please try again.");
         return;
       }
 
+      setSubmittedSnapshot({
+        selectedPlanName: payload.selectedPlanName,
+        name: payload.name.trim(),
+        email: payload.email.trim(),
+        preferredContact: payload.preferredContact,
+        timeline: payload.timeline,
+        budgetRange: payload.budgetRange,
+        studio: payload.studio.trim(),
+        website: payload.website.trim(),
+      });
       setSubmitted(true);
+      setSubmitError("");
       setFormValues(initialValues);
       setErrors({});
     } catch {
-      setSubmitError("Temporarily unavailable. Please email sleek.studiolondon@gmail.com directly.");
+      setSubmitError("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const submittedSummaryItems = submittedSnapshot
+    ? [
+        { label: "Selected package", value: submittedSnapshot.selectedPlanName },
+        { label: "Name", value: submittedSnapshot.name },
+        { label: "Email", value: submittedSnapshot.email },
+        { label: "Preferred contact", value: submittedSnapshot.preferredContact },
+        { label: "Timeline", value: submittedSnapshot.timeline },
+        { label: "Budget", value: submittedSnapshot.budgetRange },
+        submittedSnapshot.studio ? { label: "Studio name", value: submittedSnapshot.studio } : null,
+        submittedSnapshot.website ? { label: "Website", value: submittedSnapshot.website } : null,
+      ].filter((item): item is { label: string; value: string } => Boolean(item))
+    : [];
+
   return (
     <div className="contact-form-stack">
-      <form onSubmit={handleSubmit} className="contact-form" noValidate>
-        <section className="contact-plan-step" aria-labelledby="contact-plan-heading">
+      {submitted && submittedSnapshot ? (
+        <section className="contact-success-panel" role="status" aria-live="polite">
+          <p className="contact-success-kicker">Enquiry submitted</p>
+          <h3 className="contact-success-title">Enquiry received</h3>
+          <p className="contact-success-copy">
+            A confirmation email has been sent. Your enquiry is now under review.
+          </p>
+          <div className="contact-success-summary">
+            {submittedSummaryItems.map((item) => (
+              <div key={item.label} className="contact-success-summary-item">
+                <p className="contact-success-summary-label">{item.label}</p>
+                {item.label === "Website" ? (
+                  <a
+                    className="contact-success-summary-value contact-success-summary-link"
+                    href={item.value}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {item.value}
+                  </a>
+                ) : (
+                  <p className="contact-success-summary-value">{item.value}</p>
+                )}
+              </div>
+            ))}
+          </div>
+          <p className="contact-success-copy contact-success-copy-muted contact-success-closing">
+            A response will follow within one business day.
+          </p>
+        </section>
+      ) : null}
+
+      {!submitted ? (
+        <form onSubmit={handleSubmit} className="contact-form" noValidate>
+          <section className="contact-plan-step" aria-labelledby="contact-plan-heading">
           <div>
             <p className="form-label contact-plan-heading">Step 1</p>
             <h3 id="contact-plan-heading" className="contact-plan-title">
@@ -207,7 +277,7 @@ export default function ContactClient() {
                     <p className="contact-plan-card-name">{pkg.name}</p>
                   </div>
                   <div className="contact-plan-card-pricing">
-                    <p className="contact-plan-card-price">{pricing.primary}</p>
+                    {pricing.primary ? <p className="contact-plan-card-price">{pricing.primary}</p> : null}
                     {pricing.secondary ? <p className="contact-plan-card-monthly">{pricing.secondary}</p> : null}
                   </div>
                   <button
@@ -222,17 +292,19 @@ export default function ContactClient() {
                   >
                     {isExpanded ? "See less" : "See more"}
                   </button>
-                  <div
-                    id={detailsId}
-                    className={`contact-plan-card-details ${isExpanded ? "contact-plan-card-details-expanded" : ""}`}
-                  >
-                    <p className="contact-plan-card-description">{pkg.description}</p>
-                    <p className="contact-plan-card-details-label">Included</p>
-                    <ul className="contact-plan-card-perks">
-                      {pkg.includes.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
+                  <div className="contact-plan-card-detail-shell">
+                    <div
+                      id={detailsId}
+                      className={`contact-plan-card-details ${isExpanded ? "contact-plan-card-details-expanded" : ""}`}
+                    >
+                      <p className="contact-plan-card-description">{pkg.description}</p>
+                      <p className="contact-plan-card-details-label">Included</p>
+                      <ul className="contact-plan-card-perks">
+                        {pkg.includes.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </label>
               );
@@ -479,9 +551,9 @@ export default function ContactClient() {
 
         <div className="contact-submit-row">
           <Button className="form-button" type="submit" disabled={isSubmitting}>
-            Apply
+            {isSubmitting ? "Submitting..." : "Apply"}
           </Button>
-          <Button type="button" variant="ghost" onClick={resetForm}>
+          <Button type="button" variant="ghost" onClick={resetForm} disabled={isSubmitting}>
             Clear form
           </Button>
         </div>
@@ -490,18 +562,13 @@ export default function ContactClient() {
           Privacy note: your details are used only to respond to this enquiry.
         </p>
 
-        {submitted ? (
-          <p className="contact-status contact-status-success" role="status">
-            Enquiry received. We will reply within one business day with a recommended launch pathway.
-          </p>
-        ) : null}
-
         {submitError ? (
           <p className="contact-status contact-status-error" role="alert">
             {submitError}
           </p>
         ) : null}
-      </form>
+        </form>
+      ) : null}
     </div>
   );
 }
