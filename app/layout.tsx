@@ -27,6 +27,18 @@ export const metadata: Metadata = {
   },
 };
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Sleek Studio London",
+  url: "https://sleekstudiolondon.com",
+  logo: "https://sleekstudiolondon.com/logo.png",
+  sameAs: [
+    "https://instagram.com/sleekstudiolondon",
+    "https://tiktok.com/@sleekstudiolondon",
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,6 +46,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${bodyFont.variable} ${headingFont.variable} antialiased`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+      </head>
       <body className="font-sans">
         <div className="site-background" aria-hidden="true">
           <div className="site-background-wash" />
