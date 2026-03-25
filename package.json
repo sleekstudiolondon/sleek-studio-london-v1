@@ -6,7 +6,8 @@
     "dev:clean": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"try { Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction Stop | Select-Object -ExpandProperty OwningProcess) -Force -ErrorAction SilentlyContinue } catch {}; next dev -H localhost -p 3000\"",
     "build": "next build",
     "start": "next start",
-    "test": "jest"
+    "test": "jest",
+    "secrets:scan": "node scripts/check-secrets.mjs --all"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

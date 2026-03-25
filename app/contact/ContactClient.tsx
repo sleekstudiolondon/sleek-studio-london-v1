@@ -206,38 +206,70 @@ export default function ContactClient() {
       ].filter((item): item is { label: string; value: string } => Boolean(item))
     : [];
 
+  const successProcessItems = [
+    {
+      title: "Initial review",
+      copy: "Scope, budget, and preferred timing are reviewed together so the right route is clear from the outset.",
+    },
+    {
+      title: "Project handling",
+      copy: "Each enquiry is assessed with the same level of care used for active studio work and launch planning.",
+    },
+    {
+      title: "Response window",
+      copy: "A considered reply follows within one business day with the most appropriate next step.",
+    },
+  ];
+
   return (
     <div className="contact-form-stack">
       {submitted && submittedSnapshot ? (
-        <section className="contact-success-panel" role="status" aria-live="polite">
-          <p className="contact-success-kicker">Enquiry submitted</p>
-          <h3 className="contact-success-title">Enquiry received</h3>
-          <p className="contact-success-copy">
-            A confirmation email has been sent. Your enquiry is now under review.
-          </p>
-          <div className="contact-success-summary">
-            {submittedSummaryItems.map((item) => (
-              <div key={item.label} className="contact-success-summary-item">
-                <p className="contact-success-summary-label">{item.label}</p>
-                {item.label === "Website" ? (
-                  <a
-                    className="contact-success-summary-value contact-success-summary-link"
-                    href={item.value}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {item.value}
-                  </a>
-                ) : (
-                  <p className="contact-success-summary-value">{item.value}</p>
-                )}
-              </div>
-            ))}
-          </div>
-          <p className="contact-success-copy contact-success-copy-muted contact-success-closing">
-            A response will follow within one business day.
-          </p>
-        </section>
+        <div className="contact-success-layout" role="status" aria-live="polite">
+          <section className="contact-success-panel">
+            <p className="contact-success-kicker">Enquiry submitted</p>
+            <h3 className="contact-success-title">Enquiry received</h3>
+            <p className="contact-success-copy">
+              A confirmation email has been sent. Your enquiry is now under review.
+            </p>
+            <div className="contact-success-summary">
+              {submittedSummaryItems.map((item) => (
+                <div key={item.label} className="contact-success-summary-item">
+                  <p className="contact-success-summary-label">{item.label}</p>
+                  {item.label === "Website" ? (
+                    <a
+                      className="contact-success-summary-value contact-success-summary-link"
+                      href={item.value}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {item.value}
+                    </a>
+                  ) : (
+                    <p className="contact-success-summary-value">{item.value}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="contact-success-copy contact-success-copy-muted contact-success-closing">
+              A response will follow within one business day.
+            </p>
+          </section>
+
+          <section className="contact-success-process">
+            <p className="contact-success-process-label">What happens next</p>
+            <div className="contact-success-process-list">
+              {successProcessItems.map((item) => (
+                <div key={item.title} className="contact-success-process-item">
+                  <p className="contact-success-process-title">{item.title}</p>
+                  <p className="contact-success-process-copy">{item.copy}</p>
+                </div>
+              ))}
+            </div>
+            <p className="contact-success-process-note">
+              Intake remains intentionally limited so each project can be handled with focus, care, and executional clarity.
+            </p>
+          </section>
+        </div>
       ) : null}
 
       {!submitted ? (
