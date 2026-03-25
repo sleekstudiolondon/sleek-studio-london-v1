@@ -7,6 +7,7 @@ export type CaseStudy = {
   summary: string
   challenge: string
   strategy: string
+  metric?: string
   impact: string
   businessImpact: string
   image: string
@@ -22,6 +23,7 @@ export const caseStudies: CaseStudy[] = [
     summary: 'A layered, warm-neutral narrative with bespoke walnut joinery.',
     challenge: 'Reposition a heritage studio for a younger, design-forward clientele.',
     strategy: 'Premium positioning with editorial storytelling and conversion-focused messaging.',
+    metric: '38% increase in private enquiries within 6 months.',
     impact: '38% increase in private enquiries within 6 months.',
     businessImpact: 'Shortlisted by two new international developers.',
     image:
@@ -36,6 +38,7 @@ export const caseStudies: CaseStudy[] = [
     summary: 'Muted teal accents and sculptural lighting across open-plan living.',
     challenge: 'Increase qualified leads while maintaining a private, low-volume brand feel.',
     strategy: 'Website conversion uplift supported by authority-focused content.',
+    metric: '2.1x website engagement after launch.',
     impact: '2.1x website engagement after launch.',
     businessImpact: 'Improved enquiry-to-consultation ratio by 30%.',
     image:
@@ -50,6 +53,7 @@ export const caseStudies: CaseStudy[] = [
     summary: 'A creative studio reimagined in deep navy, brass, and pale stone.',
     challenge: 'Clarify positioning and improve lead qualification.',
     strategy: 'Positioning upgrade with a streamlined qualification journey.',
+    metric: 'High-fit enquiries grew by 42% in 4 months.',
     impact: 'High-fit enquiries grew by 42% in 4 months.',
     businessImpact: 'Raised average project value by 18%.',
     image:
@@ -64,6 +68,7 @@ export const caseStudies: CaseStudy[] = [
     summary: 'Soft gold tones and layered textures for an intimate boutique suite.',
     challenge: 'Expand inbound visibility beyond referrals.',
     strategy: 'SEO foundation paired with editorial content planning.',
+    metric: 'Qualified leads increased by 31% in 6 months.',
     impact: 'Qualified leads increased by 31% in 6 months.',
     businessImpact: 'Secured a multi-property contract within 8 months.',
     image:

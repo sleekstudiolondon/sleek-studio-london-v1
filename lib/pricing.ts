@@ -4,6 +4,7 @@ export type StudioPackage = {
   id: PackageId;
   name: string;
   nickname: string;
+  headline?: string;
   minBudget: number;
   deposit: number | null;
   monthly: number | null;
@@ -20,6 +21,7 @@ export const PACKAGES: StudioPackage[] = [
     id: "entry",
     name: "Entry",
     nickname: "The Edit",
+    headline: "A focused premium launch with a fast route to go-live.",
     minBudget: 1500,
     deposit: 1499,
     monthly: 749,
@@ -38,6 +40,7 @@ export const PACKAGES: StudioPackage[] = [
     id: "mid",
     name: "Mid",
     nickname: "The House",
+    headline: "A fuller site launch with stronger structure and conversion intent.",
     minBudget: 5000,
     deposit: 4599,
     monthly: 2999,
@@ -58,6 +61,7 @@ export const PACKAGES: StudioPackage[] = [
     id: "top",
     name: "Top",
     nickname: "White-Glove",
+    headline: "A private, concierge-led build for high-complexity launches.",
     minBudget: 20000,
     deposit: null,
     monthly: null,

@@ -44,7 +44,7 @@ export default function CaseStudyGrid({ limit, className = "" }: CaseStudyGridPr
             </div>
             <div>
               <p className="work-proof-label">Outcome</p>
-              <p className="work-proof-copy">{project.metric}</p>
+              <p className="work-proof-copy">{project.metric ?? project.impact}</p>
             </div>
           </div>
           <div className="button-row work-proof-actions">
