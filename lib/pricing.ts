@@ -108,7 +108,7 @@ export function getPackagePricing(packageItem: StudioPackage) {
   if (packageItem.isInviteOnly) {
     return {
       primary: "Invite only",
-      secondary: "",
+      secondary: "Pricing shaped around scope",
     };
   }
 

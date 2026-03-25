@@ -275,76 +275,82 @@ export default function ContactClient() {
       {!submitted ? (
         <form onSubmit={handleSubmit} className="contact-form" noValidate>
           <section className="contact-plan-step" aria-labelledby="contact-plan-heading">
-          <div>
-            <p className="form-label contact-plan-heading">Step 1</p>
-            <h3 id="contact-plan-heading" className="contact-plan-title">
-              Choose your plan
-            </h3>
-            <p className="contact-helper">
-              Select the package that best fits your current scope. You can refine details in the project brief below.
-            </p>
-          </div>
+            <div>
+              <p className="form-label contact-plan-heading">Step 1</p>
+              <h3 id="contact-plan-heading" className="contact-plan-title">
+                Choose your plan
+              </h3>
+              <p className="contact-helper">
+                Select the package that best fits your current scope. You can refine details in the project brief below.
+              </p>
+            </div>
 
-          <div className="contact-plan-grid" role="radiogroup" aria-label="Choose your plan">
-            {PACKAGES.map((pkg) => {
-              const isSelected = formValues.selectedPlanId === pkg.id;
-              const pricing = getPackagePricing(pkg);
-              const isExpanded = Boolean(expandedPlans[pkg.id]);
-              const detailsId = `contact-plan-details-${pkg.id}`;
+            <div className="contact-plan-grid" role="radiogroup" aria-label="Choose your plan">
+              {PACKAGES.map((pkg) => {
+                const isSelected = formValues.selectedPlanId === pkg.id;
+                const pricing = getPackagePricing(pkg);
+                const isExpanded = Boolean(expandedPlans[pkg.id]);
+                const detailsId = `contact-plan-details-${pkg.id}`;
 
-              return (
-                <label
-                  key={pkg.id}
-                  className={`contact-plan-card ${isSelected ? "contact-plan-card-active" : ""}`}
-                >
-                  <input
-                    type="radio"
-                    name="selectedPlanId"
-                    value={pkg.id}
-                    checked={isSelected}
-                    onChange={handleChange}
-                    onBlur={() => validateField("selectedPlanId")}
-                  />
-                  <div className="contact-plan-card-head">
-                    <p className="contact-plan-card-name">{pkg.name}</p>
-                  </div>
-                  <div className="contact-plan-card-pricing">
-                    {pricing.primary ? <p className="contact-plan-card-price">{pricing.primary}</p> : null}
-                    {pricing.secondary ? <p className="contact-plan-card-monthly">{pricing.secondary}</p> : null}
-                  </div>
-                  <button
-                    type="button"
-                    className="contact-plan-toggle"
-                    aria-expanded={isExpanded}
-                    aria-controls={detailsId}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      setExpandedPlans((prev) => ({ ...prev, [pkg.id]: !prev[pkg.id] }));
-                    }}
+                return (
+                  <label
+                    key={pkg.id}
+                    className={`contact-plan-card ${isSelected ? "contact-plan-card-active" : ""}`}
                   >
-                    {isExpanded ? "See less" : "See more"}
-                  </button>
-                  <div className="contact-plan-card-detail-shell">
-                    <div
-                      id={detailsId}
-                      className={`contact-plan-card-details ${isExpanded ? "contact-plan-card-details-expanded" : ""}`}
-                    >
-                      <p className="contact-plan-card-description">{pkg.description}</p>
-                      <p className="contact-plan-card-details-label">Included</p>
-                      <ul className="contact-plan-card-perks">
-                        {pkg.includes.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
+                    <div className="contact-plan-card-summary">
+                      <input
+                        type="radio"
+                        name="selectedPlanId"
+                        value={pkg.id}
+                        checked={isSelected}
+                        onChange={handleChange}
+                        onBlur={() => validateField("selectedPlanId")}
+                      />
+                      <div className="contact-plan-card-head">
+                        <p className="contact-plan-card-name">{pkg.name}</p>
+                      </div>
+                      <div className="contact-plan-card-pricing">
+                        {pricing.primary ? <p className="contact-plan-card-price">{pricing.primary}</p> : null}
+                        {pricing.secondary ? <p className="contact-plan-card-monthly">{pricing.secondary}</p> : null}
+                      </div>
+                      <div className="contact-plan-card-cta">
+                        <button
+                          type="button"
+                          className="contact-plan-toggle"
+                          aria-expanded={isExpanded}
+                          aria-controls={detailsId}
+                          onClick={(event) => {
+                            event.preventDefault();
+                            setExpandedPlans((prev) => ({ ...prev, [pkg.id]: !prev[pkg.id] }));
+                          }}
+                        >
+                          {isExpanded ? "See less" : "See more"}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </label>
-              );
-            })}
-          </div>
+                    <div
+                      className={`contact-plan-card-detail-shell ${
+                        isExpanded ? "contact-plan-card-detail-shell-expanded" : ""
+                      }`}
+                      aria-hidden={!isExpanded}
+                    >
+                      <div id={detailsId} className="contact-plan-card-details">
+                        <p className="contact-plan-card-description">{pkg.description}</p>
+                        <p className="contact-plan-card-details-label">Included</p>
+                        <ul className="contact-plan-card-perks">
+                          {pkg.includes.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
 
-          {errors.selectedPlanId ? <p className="form-error">{errors.selectedPlanId}</p> : null}
-        </section>
+            {errors.selectedPlanId ? <p className="form-error">{errors.selectedPlanId}</p> : null}
+          </section>
 
         <div className="contact-form-grid">
           <div>

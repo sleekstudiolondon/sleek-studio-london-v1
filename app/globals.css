@@ -1140,14 +1140,43 @@ a {
   flex-direction: column;
   gap: 0.52rem;
   cursor: pointer;
-  transition: all 300ms ease-out;
+  transition:
+    transform var(--transition-premium),
+    border-color var(--transition-premium),
+    box-shadow var(--transition-premium),
+    background var(--transition-premium);
   align-items: stretch;
-  height: 100%;
+}
+
+.contact-plan-card-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.52rem;
 }
 
 .contact-plan-card-detail-shell {
-  display: grid;
-  align-content: start;
+  display: block;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  transition:
+    max-height 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 300ms ease 80ms,
+    margin-top 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: max-height, opacity;
+}
+
+.contact-plan-card-detail-shell-expanded {
+  max-height: 520px;
+  opacity: 1;
+  margin-top: 0.08rem;
+}
+
+.contact-plan-card-cta {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 0.08rem;
 }
 
 .contact-plan-card-head {
@@ -1244,23 +1273,7 @@ a {
 .contact-plan-card-details {
   display: grid;
   gap: 0.46rem;
-  max-height: 0;
-  opacity: 0;
   overflow: hidden;
-  transition:
-    max-height 260ms ease,
-    opacity 200ms ease,
-    padding-top 260ms ease,
-    margin-top 260ms ease;
-  padding-top: 0;
-  margin-top: 0;
-}
-
-.contact-plan-card-details-expanded {
-  max-height: 520px;
-  opacity: 1;
-  padding-top: 0.1rem;
-  margin-top: 0.1rem;
 }
 
 .contact-plan-card-details-label {
@@ -1304,7 +1317,6 @@ a {
   background: rgba(249, 243, 235, 0.96);
   color: rgba(52, 39, 28, 0.94);
   padding: 0.48rem 0.84rem;
-  margin-top: auto;
   font: inherit;
   font-size: 0.8rem;
   font-weight: 600;
@@ -2977,12 +2989,7 @@ select:focus-visible {
 @media (min-width: 760px) {
   .contact-plan-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: stretch;
-    grid-auto-rows: 1fr;
-  }
-
-  .contact-plan-card-detail-shell {
-    min-height: 11rem;
+    align-items: start;
   }
 
   .contact-success-summary {
