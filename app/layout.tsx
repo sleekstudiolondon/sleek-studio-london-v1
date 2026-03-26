@@ -20,13 +20,8 @@ const headingFont = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Sleek Studio London",
-  description: "Premium web design and development studio",
-  // Next.js App Router auto-discovers app/favicon.ico and app/icon.png.
-  // If updates do not appear, delete .next and restart the dev server.
-  verification: {
-    google: "QGk-WIOLZ7tiTMzGYGP3_Rpqg0H5OW-dB_A71aYnkEk",
-  },
+  title: "Sleek Studio London | Web Design & Development for Businesses",
+  description: "Sleek Studio London is a premium web design and development studio creating high-converting websites for modern businesses, with ongoing support and maintenance.",
 };
 
 const organizationJsonLd = {
