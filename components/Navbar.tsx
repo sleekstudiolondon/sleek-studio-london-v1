@@ -27,7 +27,9 @@ export default function Navbar() {
   return (
     <header className="nav-shell">
       <div className="container-luxe nav-inner">
-        <Link className="nav-brand" href="/">Sleek Studio London</Link>
+        <Link className="nav-brand" href="/" aria-label="Sleek Studio London home">
+          <span className="nav-brand-text">Sleek Studio London</span>
+        </Link>
 
         <nav className="nav-links">
           {NAV_ITEMS.map((item) => {

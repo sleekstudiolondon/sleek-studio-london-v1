@@ -769,12 +769,18 @@ a {
 }
 
 .nav-brand {
+  display: inline-flex;
+  align-items: center;
   font-size: 1.14rem;
   letter-spacing: -0.01em;
   color: rgba(30, 24, 20, 0.92);
   padding-right: 1rem;
   z-index: 1;
   font-family: var(--font-heading), serif !important;
+}
+
+.nav-brand-text {
+  display: inline-block;
 }
 
 .nav-links {
@@ -898,6 +904,12 @@ a {
   justify-content: center;
   gap: 0.8rem;
   text-align: center;
+}
+
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .footer-note {
@@ -3050,7 +3062,7 @@ select:focus-visible {
   }
 
   .nav-brand {
-    max-width: 260px;
+    max-width: 280px;
   }
 
   .menu-btn {

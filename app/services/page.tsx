@@ -54,7 +54,9 @@ export default function ServicesPage() {
                 <div className="pricing-card-head">
                   <div>
                     <h2 className="card-title">{tier.name}</h2>
-                    <p className="pricing-nickname">{tier.nickname}</p>
+                    {tier.nickname !== tier.name ? (
+                      <p className="pricing-nickname">{tier.nickname}</p>
+                    ) : null}
                   </div>
                 </div>
                 <p className="pricing-bestfor">Best for: {tier.intendedFor}</p>

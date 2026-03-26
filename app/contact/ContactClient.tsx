@@ -10,6 +10,7 @@ type ContactFormValues = {
   email: string;
   phone: string;
   website: string;
+  inspirationWebsite: string;
   studio: string;
   timeline: string;
   budgetRange: string;
@@ -31,6 +32,7 @@ type SubmittedEnquirySnapshot = {
   budgetRange: string;
   studio: string;
   website: string;
+  inspirationWebsite: string;
 };
 
 const initialValues: ContactFormValues = {
@@ -39,6 +41,7 @@ const initialValues: ContactFormValues = {
   email: "",
   phone: "",
   website: "",
+  inspirationWebsite: "",
   studio: "",
   timeline: "",
   budgetRange: "",
@@ -141,6 +144,7 @@ export default function ContactClient() {
       email: formValues.email,
       phone: formValues.phone,
       website: formValues.website,
+      inspirationWebsite: formValues.inspirationWebsite,
       studio: formValues.studio,
       timeline: formValues.timeline,
       budgetRange: formValues.budgetRange,
@@ -181,6 +185,7 @@ export default function ContactClient() {
         budgetRange: payload.budgetRange,
         studio: payload.studio.trim(),
         website: payload.website.trim(),
+        inspirationWebsite: payload.inspirationWebsite.trim(),
       });
       setSubmitted(true);
       setSubmitError("");
@@ -203,6 +208,9 @@ export default function ContactClient() {
         { label: "Budget", value: submittedSnapshot.budgetRange },
         submittedSnapshot.studio ? { label: "Studio name", value: submittedSnapshot.studio } : null,
         submittedSnapshot.website ? { label: "Website", value: submittedSnapshot.website } : null,
+        submittedSnapshot.inspirationWebsite
+          ? { label: "Inspiration website", value: submittedSnapshot.inspirationWebsite }
+          : null,
       ].filter((item): item is { label: string; value: string } => Boolean(item))
     : [];
 
@@ -235,7 +243,7 @@ export default function ContactClient() {
               {submittedSummaryItems.map((item) => (
                 <div key={item.label} className="contact-success-summary-item">
                   <p className="contact-success-summary-label">{item.label}</p>
-                  {item.label === "Website" ? (
+                  {item.label === "Website" || item.label === "Inspiration website" ? (
                     <a
                       className="contact-success-summary-value contact-success-summary-link"
                       href={item.value}
@@ -460,6 +468,20 @@ export default function ContactClient() {
               value={formValues.website}
               onChange={handleChange}
               placeholder="https://yourstudio.com"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="inspirationWebsite" className="form-label">
+              Do you have a website you&apos;d like your new site to be inspired by? (optional)
+            </label>
+            <input
+              id="inspirationWebsite"
+              name="inspirationWebsite"
+              className="form-field"
+              value={formValues.inspirationWebsite}
+              onChange={handleChange}
+              placeholder="https://example.com"
             />
           </div>
 

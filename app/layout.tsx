@@ -21,7 +21,13 @@ const headingFont = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   title: "Sleek Studio London",
-  description: "Premium website design and development studio.",
+  description: "Premium web design and development studio",
+  // If favicon does not update, clear browser cache or hard refresh (Ctrl+Shift+R)
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/icon.png",
+  },
   verification: {
     google: "QGk-WIOLZ7tiTMzGYGP3_Rpqg0H5OW-dB_A71aYnkEk",
   },

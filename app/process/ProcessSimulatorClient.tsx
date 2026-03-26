@@ -236,7 +236,7 @@ function recommend(values: Values, budgetSnapshot: ReturnType<typeof getBudgetSn
   const budgetNote =
     budget > 0 && budget < item.minBudget
       ? packageId === "top"
-        ? "Your brief points toward Top, though we may need to phase the rollout if you want to stay close to the current budget."
+        ? "Your brief points toward White Glove, though we may need to phase the rollout if you want to stay close to the current budget."
         : "Your brief points upward, though we may need to trim scope or phase the rollout to stay aligned with budget."
       : "";
 
@@ -428,7 +428,7 @@ export default function ProcessSimulatorClient() {
                       <p className="launch-pages-value"><span>{formatPageCountValue(values.pages)}</span> page{values.pages === 1 ? "" : "s"}</p>
                       <input type="range" className="simulator-slider" min={1} max={20} value={values.pages} onChange={(e) => updateValue("pages", Number(e.target.value))} aria-label="Pages needed at launch" />
                       <div className="launch-pages-guides" aria-hidden="true"><span>3 pages</span><span>8 pages</span><span>20+ pages</span></div>
-                      <p className="launch-pages-note">Entry is structured for 3 pages, Mid for 8 pages, and Top for 20+ pages.</p>
+                      <p className="launch-pages-note">Individual is structured for 3 pages, The House for 8 pages, and White Glove for 20+ pages.</p>
                     </div>
                     <div className="launch-budget-card">
                       <div className="launch-budget-toolbar">

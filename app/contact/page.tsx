@@ -63,7 +63,6 @@ export default function ContactPage() {
                 {PACKAGES.map((pkg) => (
                   <span key={pkg.id} className="contact-chip">{pkg.name}: {pkg.timeline}</span>
                 ))}
-                <span className="contact-chip">Most projects: 4-18 days</span>
               </div>
             </article>
           </aside>

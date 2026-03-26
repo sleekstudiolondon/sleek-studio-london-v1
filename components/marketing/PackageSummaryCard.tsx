@@ -22,7 +22,9 @@ export default function PackageSummaryCard({
       <div className="pricing-card-head">
         <div>
           <p className="pricing-nickname">
-            {packageItem.name} / {packageItem.nickname}
+            {packageItem.nickname !== packageItem.name
+              ? `${packageItem.name} / ${packageItem.nickname}`
+              : packageItem.name}
           </p>
           <h3 className="card-title">{packageItem.headline}</h3>
         </div>
@@ -41,7 +43,7 @@ export default function PackageSummaryCard({
         ))}
       </ul>
       <div className="button-row pricing-card-cta">
-        <Button href="/contact">{packageItem.isInviteOnly ? "Request white-glove consultation" : "Book a consultation"}</Button>
+        <Button href="/contact">{packageItem.isInviteOnly ? "Request White Glove consultation" : "Book a consultation"}</Button>
       </div>
     </Card>
   );

@@ -12,7 +12,9 @@ export default function Footer() {
   return (
     <footer className="footer-shell">
       <div className="container-luxe footer-inner">
-        <p className="footer-note">(c) {new Date().getFullYear()} Sleek Studio London</p>
+        <div className="footer-brand">
+          <p className="footer-note">(c) {new Date().getFullYear()} Sleek Studio London</p>
+        </div>
         <nav className="footer-links">
           {FOOTER_LINKS.map((item) => (
             <Link key={item.href} href={item.href} className="footer-link">

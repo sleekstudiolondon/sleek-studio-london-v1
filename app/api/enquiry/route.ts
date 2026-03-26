@@ -17,6 +17,7 @@ type EnquiryPayload = {
   email?: string
   phone?: string
   website?: string
+  inspirationWebsite?: string
   studio?: string
   timeline?: string
   budgetRange?: string
@@ -102,6 +103,7 @@ const buildTextBody = (payload: EnquiryPayload) => {
     `Phone: ${sanitize(payload.phone) || 'Not provided'}`,
     `Preferred contact: ${sanitize(payload.preferredContact) || 'Not provided'}`,
     `Website: ${sanitize(payload.website) || 'Not provided'}`,
+    `Inspiration website: ${sanitize(payload.inspirationWebsite) || 'Not provided'}`,
     `Studio: ${sanitize(payload.studio) || 'Not provided'}`,
     `Selected plan: ${sanitize(payload.selectedPlanName) || sanitize(payload.selectedPlanId) || 'Not provided'}`,
     `Timeline: ${sanitize(payload.timeline) || 'Not provided'}`,
@@ -153,6 +155,7 @@ const buildHtmlBody = (payload: EnquiryPayload) => {
   const preferredContact = sanitize(payload.preferredContact) || 'Not provided'
   const studio = sanitize(payload.studio) || 'Not provided'
   const website = sanitize(payload.website) || 'Not provided'
+  const inspirationWebsite = sanitize(payload.inspirationWebsite) || 'Not provided'
   const selectedPlan = sanitize(payload.selectedPlanName) || sanitize(payload.selectedPlanId) || 'Not provided'
   const timeline = sanitize(payload.timeline) || 'Not provided'
   const budgetRange = sanitize(payload.budgetRange) || 'Not provided'
@@ -164,7 +167,8 @@ const buildHtmlBody = (payload: EnquiryPayload) => {
     normalizedBudget.includes('10,000') ||
     normalizedBudget.includes('20,000+') ||
     normalizedPlan.includes('top') ||
-    normalizedPlan.includes('white-glove')
+    normalizedPlan.includes('white-glove') ||
+    normalizedPlan.includes('white glove')
 
   const buildDetailRow = (label: string, value: string) => `
     <tr>
@@ -247,6 +251,7 @@ const buildHtmlBody = (payload: EnquiryPayload) => {
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width: 100%; border-collapse: collapse;">
                   ${buildDetailRow('Studio name', studio)}
                   ${buildDetailRow('Website', website)}
+                  ${buildDetailRow('Inspiration website', inspirationWebsite)}
                   ${buildDetailRow('Selected plan', selectedPlan)}
                   ${buildDetailRow('Timeline', timeline)}
                   ${buildDetailRow('Budget', budgetRange)}
