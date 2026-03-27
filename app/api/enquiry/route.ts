@@ -65,7 +65,7 @@ const resend = {
     async send(payload: {
       from: string
       to: string[]
-      replyTo: string
+      reply_to: string
       subject: string
       html: string
       text: string
@@ -79,7 +79,7 @@ const resend = {
         body: JSON.stringify({
           from: payload.from,
           to: payload.to,
-          reply_to: payload.replyTo,
+          reply_to: payload.reply_to,
           subject: payload.subject,
           html: payload.html,
           text: payload.text
@@ -421,14 +421,14 @@ export async function POST(req: Request) {
     console.log('Enquiry admin send: starting', {
       from: FROM_EMAIL,
       to: TO_EMAIL,
-      replyTo: email,
+      reply_to: email,
       subject: SUBJECT
     })
 
     await resend.emails.send({
       from: 'Sleek Studio London <hello@sleekstudiolondon.com>',
       to: [TO_EMAIL],
-      replyTo: email,
+      reply_to: email,
       subject: SUBJECT,
       html: buildHtmlBody(normalizedPayload),
       text: buildTextBody(normalizedPayload)
@@ -437,7 +437,7 @@ export async function POST(req: Request) {
     console.log('Enquiry admin send: success', {
       from: FROM_EMAIL,
       to: TO_EMAIL,
-      replyTo: email,
+      reply_to: email,
       subject: SUBJECT
     })
 
@@ -445,14 +445,14 @@ export async function POST(req: Request) {
       console.log('Enquiry auto-reply send: starting', {
         from: FROM_EMAIL,
         to: email,
-        replyTo: 'liam@sleekstudiolondon.com',
+        reply_to: 'liam@sleekstudiolondon.com',
         subject: AUTO_REPLY_SUBJECT
       })
 
       await resend.emails.send({
         from: 'Sleek Studio London <hello@sleekstudiolondon.com>',
         to: [email],
-        replyTo: 'liam@sleekstudiolondon.com',
+        reply_to: 'liam@sleekstudiolondon.com',
         subject: AUTO_REPLY_SUBJECT,
         html: buildAutoReplyHtml(normalizedPayload),
         text: buildAutoReplyTextBody(normalizedPayload)
@@ -461,7 +461,7 @@ export async function POST(req: Request) {
       console.log('Enquiry auto-reply send: success', {
         from: FROM_EMAIL,
         to: email,
-        replyTo: 'liam@sleekstudiolondon.com',
+        reply_to: 'liam@sleekstudiolondon.com',
         subject: AUTO_REPLY_SUBJECT
       })
     } catch (autoReplyError) {
@@ -469,7 +469,7 @@ export async function POST(req: Request) {
       console.error('Enquiry auto-reply send: failed', {
         from: FROM_EMAIL,
         to: email,
-        replyTo: 'liam@sleekstudiolondon.com',
+        reply_to: 'liam@sleekstudiolondon.com',
         subject: AUTO_REPLY_SUBJECT,
         error: autoReplyMessage,
         rawError: autoReplyError
