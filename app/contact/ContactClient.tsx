@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "../../components/ui/Button";
 import { CONTACT_BUDGET_OPTIONS, PACKAGES, getPackagePricing, type PackageId } from "../../lib/pricing";
 
@@ -88,6 +88,15 @@ export default function ContactClient() {
 
   const detailsCharCount = useMemo(() => formValues.message.trim().length, [formValues.message]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const plan = params.get("plan") as PackageId | null;
+    if (plan && PACKAGES.some((pkg) => pkg.id === plan)) {
+      setFormValues((prev) => ({ ...prev, selectedPlanId: plan }));
+      setExpandedPlans((prev) => ({ ...prev, [plan]: true }));
+    }
+  }, []);
+
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -172,7 +181,7 @@ export default function ContactClient() {
       }
 
       if (!response.ok || !data?.ok) {
-        setSubmitError("Something went wrong. Please try again.");
+        setSubmitError(data?.error || "Something went wrong. Please try again.");
         return;
       }
 
@@ -248,7 +257,7 @@ export default function ContactClient() {
                       className="contact-success-summary-value contact-success-summary-link"
                       href={item.value}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                     >
                       {item.value}
                     </a>

@@ -3,43 +3,63 @@ import Section from "../components/ui/Section";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import Kicker from "../components/ui/Kicker";
+import { PACKAGES } from "../lib/pricing";
+import { caseStudies } from "../lib/caseStudies";
 
 const OUTCOMES = [
   {
-    title: "Perception",
-    copy: "A digital presence that reads as deliberate, composed, and distinctly high-end.",
+    title: "Luxury perception",
+    copy: "A digital presence that feels aligned with premium fees, discerning clients, and design-led referrals.",
   },
   {
-    title: "Clarity",
-    copy: "Sharper narrative structure so the right client understands your value in moments.",
+    title: "Sharper qualification",
+    copy: "A calmer enquiry route that frames budget, timeline, and fit before the first consultation.",
   },
   {
-    title: "Enquiry Quality",
-    copy: "A calmer route from first impression to application, filtering for stronger-fit briefs.",
+    title: "Ongoing refinement",
+    copy: "A deposit + monthly model with a clear request rhythm, so your website can keep improving after launch.",
   },
 ];
 
 const WHAT_YOU_GET = [
-  "Editorial page architecture tailored to design-led studios",
-  "Refined typography and spacing systems with clear hierarchy",
-  "Reliable, responsive development with disciplined performance",
-  "An enquiry path designed for better-qualified introductions",
-  "Measured launch support and post-release refinement",
+  "Editorial page architecture tailored to interior design studios",
+  "Refined typography, spacing, and visual hierarchy",
+  "Portfolio and case-study framing that sells design outcomes",
+  "One request queue at a time for controlled, high-quality refinement",
+  "Responsive development, technical QA, and launch support",
 ];
 
 export default function HomePage() {
   return (
     <PageShell
-      title="Digital presence, composed like an interior."
-      subtitle="We design and build editorial websites for interior studios that value restraint, clarity, and quiet authority."
+      title="Luxury web design, composed for interior designers."
+      subtitle="We design and build editorial websites for interior studios that need a refined portfolio, a clearer enquiry path, and high-touch support after launch."
       hideEyebrow
     >
       <Section narrow center>
         <div className="button-row">
-          <Button href="/contact">Apply now</Button>
-          <Button href="/services" variant="secondary">
-            View pricing
+          <Button href="/contact">Apply for a project slot</Button>
+          <Button href="/work" variant="secondary">
+            View selected work
           </Button>
+        </div>
+        <p className="section-note">Limited clients per cycle · Hands-free delivery · One request queue at a time</p>
+      </Section>
+
+      <Section divider>
+        <Kicker>Proof of fit</Kicker>
+        <div className="proof-strip" aria-label="Selected example websites">
+          {caseStudies.map((project) => (
+            <Card key={project.slug} className="proof-card" variant="panel">
+              <p className="pricing-nickname">{project.packageName}</p>
+              <h2 className="card-title">{project.title}</h2>
+              <p className="card-copy">{project.pageArchitecture}</p>
+              <p className="card-copy">{project.metric}</p>
+            </Card>
+          ))}
+        </div>
+        <div className="button-row">
+          <Button href="/work" variant="secondary">Explore the portfolio</Button>
         </div>
       </Section>
 
@@ -47,14 +67,16 @@ export default function HomePage() {
         <Kicker>Why it matters</Kicker>
         <div className="editorial-split">
           <div className="editorial-column">
-            <h2 className="section-title">Perception sets the tone before the first call.</h2>
+            <h2 className="section-title">Your website is the first room a client enters.</h2>
             <p className="section-copy">
-              Your website is usually the first room a client enters. It should feel considered, not crowded, and confident without noise.
+              It should feel deliberate, spacious, and commercially clear. We bring the same attention to pacing,
+              proportion, and detail that your clients expect from a beautifully resolved interior.
             </p>
           </div>
           <div className="editorial-column">
             <p className="section-copy">
-              We shape each page around pacing and legibility, so the enquiry experience feels precise from opening scroll to final submission.
+              Each page is shaped to help prospects understand your taste, trust your process, and take the next step
+              without being rushed through a generic funnel.
             </p>
             <ul className="list-soft">
               {WHAT_YOU_GET.map((item) => (
@@ -77,15 +99,33 @@ export default function HomePage() {
         </div>
       </Section>
 
+      <Section divider>
+        <Kicker>Packages</Kicker>
+        <div className="feature-grid">
+          {PACKAGES.map((pkg) => (
+            <Card key={pkg.id} className="content-card" variant="card" recommended={pkg.id === "mid"}>
+              <p className="pricing-nickname">{pkg.nickname}</p>
+              <h3 className="card-title">{pkg.name}</h3>
+              <p className="card-copy">{pkg.pageCount}{pkg.isInviteOnly ? "+" : ""} pages · {pkg.requestAllowance} · {pkg.responseTime}</p>
+              <p className="card-copy">{pkg.headline}</p>
+            </Card>
+          ))}
+        </div>
+        <div className="button-row">
+          <Button href="/services" variant="secondary">Compare packages</Button>
+        </div>
+      </Section>
+
       <Section narrow center>
         <Kicker>Designed for</Kicker>
-        <h2 className="section-title">Individual designers through to mid-sized studios.</h2>
+        <h2 className="section-title">Individual designers through to established interiors practices.</h2>
         <p className="section-copy">
-          We work with independent practices, boutique teams, and growing multi-designer studios. When multiple profiles are needed, we build a unified structure that keeps every project easy to navigate.
+          We work with independent designers, boutique teams, and ambitious multi-page studios. When the scope grows,
+          we create a page-family system that keeps every project, service, and enquiry route easy to navigate.
         </p>
         <p className="section-note">We take on a limited number of projects each cycle to protect quality.</p>
         <div className="button-row">
-          <Button href="/contact">Apply now</Button>
+          <Button href="/contact">Apply for a project slot</Button>
         </div>
       </Section>
     </PageShell>

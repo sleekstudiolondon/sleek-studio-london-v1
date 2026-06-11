@@ -401,10 +401,18 @@ export async function POST(req: Request) {
   const apiKey = process.env.RESEND_API_KEY
 
   if (!apiKey) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('Enquiry email is not configured: RESEND_API_KEY is missing in production.')
+      return NextResponse.json(
+        { ok: false, error: 'Email service is not configured. Please email liam@sleekstudiolondon.com directly.' },
+        { status: 503 }
+      )
+    }
+
     console.warn('DEV MODE: No RESEND_API_KEY, logging instead of sending')
     console.log('Form submission:', payload)
 
-    return NextResponse.json({ ok: true })
+    return NextResponse.json({ ok: true, devMode: true })
   }
 
   try {

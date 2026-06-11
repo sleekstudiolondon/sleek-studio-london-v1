@@ -8,11 +8,13 @@ const NAV_ITEMS = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
   { label: "Process", href: "/process" },
+  { label: "Work", href: "/work" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
 
 function isActivePath(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

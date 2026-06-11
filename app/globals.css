@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --font-body: var(--font-body-source);
-  --font-heading: var(--font-heading-source);
+  --font-body: var(--font-body-source, "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif);
+  --font-heading: var(--font-heading-source, "Cormorant Garamond", Georgia, "Times New Roman", serif);
   --site-max-width: 1280px;
   --site-gutter: 2.9rem;
   --bg-base: #f4eee5;
@@ -469,6 +469,7 @@ a {
 
 .work-image-cover {
   width: 100%;
+  aspect-ratio: 4 / 3;
   height: auto;
   display: block;
   object-fit: cover;
@@ -904,6 +905,33 @@ a {
   justify-content: center;
   gap: 0.8rem;
   text-align: center;
+}
+
+.footer-inner-expanded {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+
+.footer-brand-stack {
+  display: grid;
+  gap: 0.22rem;
+  justify-items: center;
+}
+
+.footer-studio-name {
+  font-family: var(--font-heading), serif !important;
+  font-size: 1.12rem;
+  color: rgba(30, 24, 20, 0.94);
+}
+
+.footer-nav-groups {
+  display: grid;
+  gap: 0.62rem;
+}
+
+.footer-social-links .footer-link {
+  font-size: 0.82rem;
+  color: rgba(58, 47, 36, 0.6);
 }
 
 .footer-brand {
@@ -3079,6 +3107,14 @@ select:focus-visible {
     justify-content: space-between;
     text-align: left;
   }
+
+  .footer-brand-stack {
+    justify-items: start;
+  }
+
+  .footer-nav-groups {
+    justify-items: end;
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1020px) {
@@ -3218,5 +3254,51 @@ select:focus-visible {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.proof-strip {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 0.95rem;
+}
+
+.proof-card {
+  min-height: 100%;
+}
+
+.package-meta-grid {
+  display: grid;
+  gap: 0.42rem;
+  margin-top: 0.3rem;
+}
+
+.package-meta-grid span {
+  display: inline-flex;
+  width: fit-content;
+  border: 1px solid rgba(99, 77, 54, 0.14);
+  border-radius: 999px;
+  background: rgba(247, 241, 233, 0.82);
+  padding: 0.32rem 0.58rem;
+  color: rgba(64, 48, 33, 0.8);
+  font-size: 0.76rem;
+}
+
+.work-card .button-row,
+.case-study-hero-card + .button-row {
+  justify-content: flex-start;
+}
+
+.architecture-list {
+  margin-top: 0;
+}
+
+@media (min-width: 760px) {
+  .proof-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .package-meta-grid {
+    grid-template-columns: repeat(3, minmax(0, max-content));
   }
 }
