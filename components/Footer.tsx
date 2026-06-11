@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const FOOTER_LINKS = [
   { label: "Services", href: "/services" },
@@ -14,6 +17,11 @@ const SOCIAL_LINKS = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
+  const isDemoWebsite = /^\/work\/[^/]+$/.test(pathname);
+
+  if (isDemoWebsite) return null;
+
   return (
     <footer className="footer-shell">
       <div className="container-luxe footer-inner footer-inner-expanded">
