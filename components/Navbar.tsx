@@ -19,6 +19,7 @@ function isActivePath(pathname: string, href: string) {
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const visibleNavItems = pathname === "/" ? NAV_ITEMS.filter((item) => item.href !== "/") : NAV_ITEMS;
 
   useEffect(() => {
     setIsOpen(false);
@@ -32,7 +33,7 @@ export default function Navbar() {
         </Link>
 
         <nav className="nav-links">
-          {NAV_ITEMS.map((item) => {
+          {visibleNavItems.map((item) => {
             const active = isActivePath(pathname, item.href);
             return (
               <Link
@@ -68,7 +69,7 @@ export default function Navbar() {
           onClick={(event) => event.stopPropagation()}
         >
           <nav className="container-luxe menu-stack">
-            {NAV_ITEMS.map((item) => {
+            {visibleNavItems.map((item) => {
               const active = isActivePath(pathname, item.href);
               return (
                 <Link

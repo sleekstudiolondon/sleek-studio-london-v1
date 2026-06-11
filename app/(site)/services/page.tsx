@@ -1,9 +1,10 @@
-import PageShell from "../../components/layout/PageShell";
-import Section from "../../components/ui/Section";
-import Card from "../../components/ui/Card";
-import Button from "../../components/ui/Button";
-import Kicker from "../../components/ui/Kicker";
-import { getPackagePricing, PACKAGES } from "../../lib/pricing";
+import PageShell from "../../../components/layout/PageShell";
+import Section from "../../../components/ui/Section";
+import Card from "../../../components/ui/Card";
+import Button from "../../../components/ui/Button";
+import Kicker from "../../../components/ui/Kicker";
+import { getPackagePricing, PACKAGES } from "../../../lib/pricing";
+import { EXAMPLE_PROJECT_CTA_LABEL, getPackageExampleByPackageId } from "../../../lib/packageExamples";
 
 export default function ServicesPage() {
   return (
@@ -48,15 +49,14 @@ export default function ServicesPage() {
         <div className="pricing-grid">
           {PACKAGES.map((tier) => {
             const pricing = getPackagePricing(tier);
+            const exampleSite = getPackageExampleByPackageId(tier.id);
 
             return (
               <Card key={tier.id} className="pricing-card" variant="card">
                 <div className="pricing-card-head">
                   <div>
                     <h2 className="card-title">{tier.name}</h2>
-                    {tier.nickname !== tier.name ? (
-                      <p className="pricing-nickname">{tier.nickname}</p>
-                    ) : null}
+                    {tier.nickname !== tier.name ? <p className="pricing-nickname">{tier.nickname}</p> : null}
                   </div>
                 </div>
                 <p className="pricing-bestfor">Best for: {tier.intendedFor}</p>
@@ -71,8 +71,13 @@ export default function ServicesPage() {
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
-                <div className="button-row pricing-card-cta">
-                  <Button href="/contact">{tier.isInviteOnly ? "Request access" : "Apply now"}</Button>
+                <div className="button-row pricing-card-cta pricing-card-cta-stack">
+                  <Button href={exampleSite.href} className="pricing-card-example-button">
+                    {EXAMPLE_PROJECT_CTA_LABEL}
+                  </Button>
+                  <Button href="/contact" variant="ghost" className="pricing-card-apply-button">
+                    {tier.isInviteOnly ? "Request access" : "Apply now"}
+                  </Button>
                 </div>
               </Card>
             );

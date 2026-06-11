@@ -9,6 +9,9 @@ type PageShellProps = {
   children: ReactNode;
   eyebrow?: string;
   hideEyebrow?: boolean;
+  className?: string;
+  heroFooter?: ReactNode;
+  heroFooterStagger?: number;
 };
 
 export default function PageShell({
@@ -17,9 +20,12 @@ export default function PageShell({
   children,
   eyebrow,
   hideEyebrow = false,
+  className = "",
+  heroFooter,
+  heroFooterStagger = 180,
 }: PageShellProps) {
   return (
-    <div className="page-shell">
+    <div className={["page-shell", className].filter(Boolean).join(" ")}>
       <header className="page-hero">
         <Container narrow center>
           {!hideEyebrow && eyebrow ? (
@@ -33,6 +39,11 @@ export default function PageShell({
           <Reveal stagger={120}>
             <p className="page-subtitle">{subtitle}</p>
           </Reveal>
+          {heroFooter ? (
+            <Reveal className="page-hero-footer" stagger={heroFooterStagger}>
+              {heroFooter}
+            </Reveal>
+          ) : null}
         </Container>
       </header>
       <div className="page-content">{children}</div>

@@ -54,7 +54,7 @@ export const PACKAGES: StudioPackage[] = [
       "8 pages",
       "Hosting",
       "Domain name",
-      "Modifications completed within 48 hours after approval",
+      "5 changes per week with 48-hour turnaround after approval",
       "Free add-ons",
       "Refined enquiry form setup",
       "Expanded content structure",
@@ -74,7 +74,7 @@ export const PACKAGES: StudioPackage[] = [
     timeline: "12-18 days",
     description: "Our most tailored route for ambitious launches where complexity, pace, and polish all need to stay elevated.",
     includes: [
-      "20 pages",
+      "20+ pages",
       "Hosting",
       "Domain name",
       "Priority modifications completed within 24 hours after approval",

@@ -6,6 +6,7 @@ import Reveal from "../Reveal";
 type SectionProps = {
   children: ReactNode;
   className?: string;
+  id?: string;
   narrow?: boolean;
   center?: boolean;
   divider?: boolean;
@@ -17,6 +18,7 @@ type SectionProps = {
 export default function Section({
   children,
   className = "",
+  id,
   narrow = false,
   center = false,
   divider = false,
@@ -33,7 +35,7 @@ export default function Section({
     .join(" ");
 
   return (
-    <section className={sectionClass}>
+    <section className={sectionClass} id={id}>
       <Container narrow={narrow} center={center}>
         {reveal ? <Reveal stagger={revealStagger}>{children}</Reveal> : children}
       </Container>

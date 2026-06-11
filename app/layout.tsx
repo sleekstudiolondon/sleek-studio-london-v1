@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Bodoni_Moda, Cormorant_Garamond, DM_Serif_Display, Manrope } from "next/font/google";
 import "./globals.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import "./john-shared-sticky.css";
+import "./studio-alder-landing.css";
 
 const bodyFont = Manrope({
   subsets: ["latin"],
@@ -17,6 +17,20 @@ const headingFont = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-heading-source",
   weight: ["500", "600", "700"],
+  display: "swap",
+});
+
+const editorialFont = DM_Serif_Display({
+  subsets: ["latin"],
+  variable: "--font-editorial-source",
+  weight: ["400"],
+  display: "swap",
+});
+
+const displayFont = Bodoni_Moda({
+  subsets: ["latin"],
+  variable: "--font-display-source",
+  weight: ["400", "500"],
   display: "swap",
 });
 
@@ -43,7 +57,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bodyFont.variable} ${headingFont.variable} antialiased`}>
+    <html
+      lang="en"
+      className={`${bodyFont.variable} ${headingFont.variable} ${editorialFont.variable} ${displayFont.variable} antialiased`}
+    >
       <head>
         <script
           type="application/ld+json"
@@ -51,18 +68,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans">
-        <div className="site-background" aria-hidden="true">
-          <div className="site-background-wash" />
-          <div className="site-background-wash site-background-wash-alt" />
-          <div className="site-background-noise" />
-        </div>
-        <div className="site-shell">
-          <Navbar />
-          <main className="site-main">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        {children}
         <Analytics />
         {/* Speed Insights only collects data in production, not localhost */}
         <SpeedInsights />

@@ -1,5 +1,5 @@
-import ProcessSimulatorClient from "./ProcessSimulatorClient";
-import Reveal from "../../components/Reveal";
+import ProcessSimulatorClient from "../../process/ProcessSimulatorClient";
+import Reveal from "../../../components/Reveal";
 
 export default function ProcessPage() {
   return (

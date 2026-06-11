@@ -1,0 +1,104 @@
+.example-theme-john .example-site-header-john.example-site-header-john-sticky-shared {
+  position: sticky;
+  top: 0;
+  z-index: 70;
+  padding-top: 0.55rem;
+  border: 0;
+  background: linear-gradient(180deg, rgba(244, 238, 231, 0.92) 0%, rgba(244, 238, 231, 0.74) 56%, rgba(244, 238, 231, 0) 100%);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-bar-john-sticky-shared {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  max-width: calc(100% - 1.8rem);
+  min-height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared {
+  justify-self: center;
+  width: auto;
+  max-width: 100%;
+  gap: 0.48rem 1.35rem;
+  padding: 0.18rem 0 0.24rem;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared .example-site-link {
+  position: relative;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  line-height: 1.1;
+  padding: 0 0 0.28rem;
+  color: rgba(46, 35, 27, 0.74);
+  transition: color 220ms ease, opacity 220ms ease;
+}
+
+.example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared .example-site-link-active {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: rgba(32, 24, 18, 0.96);
+}
+
+.example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared .example-site-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.28;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 220ms ease, opacity 220ms ease;
+}
+
+.example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared .example-site-link:hover::after,
+.example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared .example-site-link:focus-visible::after,
+.example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared .example-site-link-active::after {
+  transform: scaleX(1);
+}
+
+.example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared .example-site-link:hover,
+.example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared .example-site-link:focus-visible {
+  opacity: 0.92;
+  color: rgba(32, 24, 18, 0.92);
+}
+
+@media (max-width: 899px) {
+  .example-theme-john .example-site-header-john.example-site-header-john-sticky-shared {
+    padding-top: 0.4rem;
+    background: linear-gradient(180deg, rgba(244, 238, 231, 0.94) 0%, rgba(244, 238, 231, 0.76) 58%, rgba(244, 238, 231, 0) 100%);
+  }
+
+  .example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-bar-john-sticky-shared {
+    max-width: calc(100% - 1.2rem);
+  }
+
+  .example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared {
+    gap: 0.42rem 0.88rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared .example-site-link,
+  .example-theme-john .example-site-header-john.example-site-header-john-sticky-shared .example-site-nav-john-sticky-shared .example-site-link::after {
+    transition: none;
+  }
+}

@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import PageShell from "../../../components/layout/PageShell";
-import Section from "../../../components/ui/Section";
-import Card from "../../../components/ui/Card";
-import Button from "../../../components/ui/Button";
-import Kicker from "../../../components/ui/Kicker";
+import PageShell from "../../../../components/layout/PageShell";
+import Section from "../../../../components/ui/Section";
+import Card from "../../../../components/ui/Card";
+import Button from "../../../../components/ui/Button";
+import Kicker from "../../../../components/ui/Kicker";
 import { caseStudies } from "@/lib/caseStudies";
 
 export const dynamicParams = false;
@@ -20,11 +20,7 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
   if (!cs) return notFound();
 
   return (
-    <PageShell
-      eyebrow="Case Study"
-      title={cs.title}
-      subtitle={`${cs.location} | ${cs.year} | ${cs.focus}`}
-    >
+    <PageShell eyebrow="Case Study" title={cs.title} subtitle={`${cs.location} | ${cs.year} | ${cs.focus}`}>
       <Section narrow divider>
         <Link href="/work" className="ui-button ui-button-secondary">
           Back to work
@@ -48,10 +44,18 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
       <Section narrow>
         <Kicker>Project details</Kicker>
         <ul className="list-soft">
-          <li><strong>Challenge:</strong> {cs.challenge}</li>
-          <li><strong>Approach:</strong> {cs.strategy}</li>
-          <li><strong>Outcome:</strong> {cs.impact}</li>
-          <li><strong>Business impact:</strong> {cs.businessImpact}</li>
+          <li>
+            <strong>Challenge:</strong> {cs.challenge}
+          </li>
+          <li>
+            <strong>Approach:</strong> {cs.strategy}
+          </li>
+          <li>
+            <strong>Outcome:</strong> {cs.impact}
+          </li>
+          <li>
+            <strong>Business impact:</strong> {cs.businessImpact}
+          </li>
         </ul>
       </Section>
 
