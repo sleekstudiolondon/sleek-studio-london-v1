@@ -9,7 +9,7 @@ import { caseStudies } from "../lib/caseStudies";
 const OUTCOMES = [
   {
     title: "Luxury perception",
-    copy: "A digital presence that feels aligned with premium fees, discerning clients, and design-led referrals.",
+    copy: "A digital presence that feels aligned with premium fees, discerning clients, and design-led referrals from the first glance.",
   },
   {
     title: "Sharper qualification",
@@ -17,7 +17,7 @@ const OUTCOMES = [
   },
   {
     title: "Ongoing refinement",
-    copy: "A deposit + monthly model with a clear request rhythm, so your website can keep improving after launch.",
+    copy: "A composed support rhythm, so your website can keep improving after launch without losing its editorial quality.",
   },
 ];
 
@@ -51,10 +51,10 @@ export default function HomePage() {
         <div className="proof-strip" aria-label="Selected example websites">
           {caseStudies.map((project) => (
             <Card key={project.slug} className="proof-card" variant="panel">
-              <p className="pricing-nickname">{project.packageName}</p>
+              <p className="pricing-nickname">{project.archetype}</p>
               <h2 className="card-title">{project.title}</h2>
-              <p className="card-copy">{project.pageArchitecture}</p>
-              <p className="card-copy">{project.metric}</p>
+              <p className="card-copy">{project.style}</p>
+              <p className="card-copy">{project.summary}</p>
             </Card>
           ))}
         </div>
