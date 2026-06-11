@@ -6,6 +6,6 @@ describe('Work case study navigation', () => {
     render(<WorkClient />)
 
     const mayfairLink = screen.getAllByRole('link', { name: /view case study/i })[0]
-    expect(mayfairLink).toHaveAttribute('href', '/work/mayfair-townhouse')
+    expect(mayfairLink).toHaveAttribute('href', '/work/john-doe')
   })
 })

@@ -1,28 +1,13 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-const bodyFont = Manrope({
-  subsets: ["latin"],
-  variable: "--font-body-source",
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
-const headingFont = Cormorant_Garamond({
-  subsets: ["latin"],
-  variable: "--font-heading-source",
-  weight: ["500", "600", "700"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "Sleek Studio London | Web Design & Development for Businesses",
-  description: "Sleek Studio London is a premium web design and development studio creating high-converting websites for modern businesses, with ongoing support and maintenance.",
+  title: "Sleek Studio London | Luxury Web Design for Interior Designers",
+  description: "Sleek Studio London designs refined, conversion-focused websites for interior designers and premium interiors studios with high-touch delivery and ongoing refinement.",
 };
 
 const organizationJsonLd = {
@@ -43,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bodyFont.variable} ${headingFont.variable} antialiased`}>
+    <html lang="en" className="antialiased">
       <head>
         <script
           type="application/ld+json"

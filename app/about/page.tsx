@@ -89,7 +89,7 @@ export default function AboutPage() {
                 key={item.label}
                 href={item.href}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="about-social-link"
               >
                 <span>{item.label}</span>
@@ -99,7 +99,8 @@ export default function AboutPage() {
           </div>
         </div>
         <div className="button-row">
-          <Button href="/contact">Apply now</Button>
+          <Button href="/contact">Apply for a project slot</Button>
+          <Button href="/work" variant="secondary">View selected work</Button>
         </div>
       </Section>
     </PageShell>

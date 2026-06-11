@@ -255,7 +255,7 @@ function recommend(values: Values, budgetSnapshot: ReturnType<typeof getBudgetSn
     nextStep:
       values.hasExistingSite === "yes"
         ? "Apply with your current site details so we can map the cleanest rebuild or migration path."
-        : "Apply now and we will come back with the clearest route to launch, scope, and next step.",
+        : "Apply for a project slot and we will come back with the clearest route to launch, scope, and next step.",
     budgetGbp: budget,
   };
 }

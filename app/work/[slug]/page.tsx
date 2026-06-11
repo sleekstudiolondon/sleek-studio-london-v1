@@ -23,17 +23,17 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
     <PageShell
       eyebrow="Case Study"
       title={cs.title}
-      subtitle={`${cs.location} | ${cs.year} | ${cs.focus}`}
+      subtitle={`${cs.packageName} · ${cs.pageArchitecture} · ${cs.focus}`}
     >
       <Section narrow divider>
         <Link href="/work" className="ui-button ui-button-secondary">
           Back to work
         </Link>
-        <Card as="article" className="content-card" hoverable={false}>
+        <Card as="article" className="content-card case-study-hero-card" hoverable={false}>
           <div className="work-image-frame">
             <Image
               src={cs.image}
-              alt={cs.title}
+              alt={`${cs.title} website direction`}
               width={1800}
               height={1200}
               className="work-image-cover"
@@ -41,12 +41,13 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
               priority
             />
           </div>
+          <p className="pricing-nickname">{cs.location} · {cs.year}</p>
           <p className="section-copy">{cs.summary}</p>
         </Card>
       </Section>
 
       <Section narrow>
-        <Kicker>Project details</Kicker>
+        <Kicker>Website outcome</Kicker>
         <ul className="list-soft">
           <li><strong>Challenge:</strong> {cs.challenge}</li>
           <li><strong>Approach:</strong> {cs.strategy}</li>
@@ -55,11 +56,23 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
         </ul>
       </Section>
 
+      <Section narrow>
+        <Kicker>Page architecture</Kicker>
+        <Card className="content-card" hoverable={false}>
+          <ul className="list-soft architecture-list">
+            {cs.pages.map((page) => (
+              <li key={page}>{page}</li>
+            ))}
+          </ul>
+        </Card>
+      </Section>
+
       <Section narrow center>
         <h2 className="section-title">Ready for your own case-study-level website?</h2>
         <p className="section-note">We accept a limited number of projects each cycle.</p>
         <div className="button-row">
-          <Button href="/contact">Apply now</Button>
+          <Button href="/contact">Apply for a project slot</Button>
+          <Button href="/services" variant="secondary">Compare packages</Button>
         </div>
       </Section>
     </PageShell>

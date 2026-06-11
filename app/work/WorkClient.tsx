@@ -10,18 +10,18 @@ export default function WorkPage() {
   return (
     <PageShell
       eyebrow="Work"
-      title="Selected projects shaped with quiet precision."
-      subtitle="A look at recent interiors and studio platforms designed for clarity, trust, and premium demand."
+      title="Selected website examples for interior studios."
+      subtitle="A focused portfolio of package-aligned website architectures: from a three-page individual designer launch to a White Glove 20+ page digital estate."
     >
       <Section divider>
         <Kicker>Portfolio</Kicker>
         <div className="feature-grid">
           {caseStudies.map((project) => (
-            <Card key={project.slug} className="content-card" variant="panel">
+            <Card key={project.slug} className="content-card work-card" variant="panel">
               <div className="work-image-frame">
                 <Image
                   src={project.image}
-                  alt={project.title}
+                  alt={`${project.title} website atmosphere`}
                   width={1400}
                   height={1000}
                   className="work-image-cover"
@@ -29,13 +29,14 @@ export default function WorkPage() {
                   loading="lazy"
                 />
               </div>
+              <p className="pricing-nickname">{project.packageName} · {project.pageArchitecture}</p>
               <h2 className="card-title">{project.title}</h2>
-              <p className="card-copy">{project.location} | {project.year} | {project.focus}</p>
+              <p className="card-copy">{project.location} · {project.year} · {project.focus}</p>
               <p className="card-copy">{project.summary}</p>
               <ul className="list-soft">
-                <li><strong>Challenge:</strong> {project.challenge}</li>
-                <li><strong>Strategy:</strong> {project.strategy}</li>
-                <li><strong>Impact:</strong> {project.impact}</li>
+                <li><strong>Website challenge:</strong> {project.challenge}</li>
+                <li><strong>Digital strategy:</strong> {project.strategy}</li>
+                <li><strong>Service level:</strong> {project.metric}</li>
               </ul>
               <div className="button-row">
                 <Button href={`/work/${project.slug}`} variant="secondary">View case study</Button>
@@ -52,7 +53,8 @@ export default function WorkPage() {
           We shape every project around refined structure, premium design detail, and a smooth enquiry journey.
         </p>
         <div className="button-row">
-          <Button href="/contact">Apply now</Button>
+          <Button href="/contact">Apply for a project slot</Button>
+          <Button href="/services" variant="secondary">Compare packages</Button>
         </div>
       </Section>
     </PageShell>
