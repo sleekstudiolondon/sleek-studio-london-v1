@@ -18,7 +18,7 @@ export default function CaseStudyGrid({ limit, className = "" }: CaseStudyGridPr
           <div className="work-image-frame">
             <Image
               src={project.image}
-              alt={project.title}
+              alt={`${project.title} interior website concept`}
               width={1400}
               height={1000}
               className="work-image-cover"
@@ -28,28 +28,24 @@ export default function CaseStudyGrid({ limit, className = "" }: CaseStudyGridPr
           </div>
           <div className="work-proof-meta">
             <span>{project.location}</span>
-            <span>{project.focus}</span>
+            <span>{project.archetype}</span>
             <span>{project.year}</span>
           </div>
           <h3 className="card-title">{project.title}</h3>
           <p className="card-copy">{project.summary}</p>
           <div className="work-proof-stack">
             <div>
-              <p className="work-proof-label">Challenge</p>
-              <p className="work-proof-copy">{project.challenge}</p>
+              <p className="work-proof-label">Visual language</p>
+              <p className="work-proof-copy">{project.style}</p>
             </div>
             <div>
-              <p className="work-proof-label">Strategy</p>
-              <p className="work-proof-copy">{project.strategy}</p>
-            </div>
-            <div>
-              <p className="work-proof-label">Outcome</p>
-              <p className="work-proof-copy">{project.metric ?? project.impact}</p>
+              <p className="work-proof-label">Example outcome</p>
+              <p className="work-proof-copy">{project.outcome}</p>
             </div>
           </div>
           <div className="button-row work-proof-actions">
             <Button href={`/work/${project.slug}`} variant="secondary">
-              View case study
+              Explore website
             </Button>
           </div>
         </Card>
