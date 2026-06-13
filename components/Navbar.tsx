@@ -21,10 +21,13 @@ function isActivePath(pathname: string, href: string) {
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const isDemoWebsite = /^\/work\/[^/]+$/.test(pathname);
 
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
+
+  if (isDemoWebsite) return null;
 
   return (
     <header className="nav-shell">
