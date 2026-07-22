@@ -18,77 +18,28 @@ function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+function isStandaloneDemo(pathname: string) {
+  return /^\/work\/(john-doe|studio-alter)(?:\/.*)?$/.test(pathname) || /^\/work\/maison-form(?:\/.*)?$/.test(pathname);
+}
+
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const isDemoWebsite = /^\/work\/[^/]+$/.test(pathname);
 
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
 
-  if (isDemoWebsite) return null;
+  if (isStandaloneDemo(pathname)) return null;
 
   return (
     <header className="nav-shell">
       <div className="container-luxe nav-inner">
-        <Link className="nav-brand" href="/" aria-label="Sleek Studio London home">
-          <span className="nav-brand-text">Sleek Studio London</span>
-        </Link>
-
-        <nav className="nav-links">
-          {NAV_ITEMS.map((item) => {
-            const active = isActivePath(pathname, item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`nav-link ${active ? "nav-link-active" : ""}`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <button
-          type="button"
-          className="menu-btn"
-          onClick={() => setIsOpen((value) => !value)}
-          aria-expanded={isOpen}
-          aria-controls="mobile-navigation"
-          aria-label="Toggle menu"
-        >
-          Menu
-        </button>
+        <Link className="nav-brand" href="/" aria-label="Sleek Studio London home"><span className="nav-brand-text">Sleek Studio London</span></Link>
+        <nav className="nav-links">{NAV_ITEMS.map((item) => { const active = isActivePath(pathname, item.href); return <Link key={item.href} href={item.href} className={`nav-link ${active ? "nav-link-active" : ""}`}>{item.label}</Link>; })}</nav>
+        <button type="button" className="menu-btn" onClick={() => setIsOpen((value) => !value)} aria-expanded={isOpen} aria-controls="mobile-navigation" aria-label="Toggle menu">Menu</button>
       </div>
-      <div
-        className={`menu-overlay ${isOpen ? "menu-overlay-open" : ""}`}
-        onClick={() => setIsOpen(false)}
-        aria-hidden={!isOpen}
-      >
-        <div
-          id="mobile-navigation"
-          className="menu-panel"
-          onClick={(event) => event.stopPropagation()}
-        >
-          <nav className="container-luxe menu-stack">
-            {NAV_ITEMS.map((item) => {
-              const active = isActivePath(pathname, item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`menu-link ${active ? "menu-link-active" : ""}`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
+      <div className={`menu-overlay ${isOpen ? "menu-overlay-open" : ""}`} onClick={() => setIsOpen(false)} aria-hidden={!isOpen}><div id="mobile-navigation" className="menu-panel" onClick={(event) => event.stopPropagation()}><nav className="container-luxe menu-stack">{NAV_ITEMS.map((item) => { const active = isActivePath(pathname, item.href); return <Link key={item.href} href={item.href} className={`menu-link ${active ? "menu-link-active" : ""}`} onClick={() => setIsOpen(false)}>{item.label}</Link>; })}</nav></div></div>
     </header>
   );
 }
