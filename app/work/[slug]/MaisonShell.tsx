@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 import { maisonNav } from "@/lib/maisonForm";
+import "./MaisonRoutes.module.css";
 
 export default function MaisonShell({ current, children }: { current: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
