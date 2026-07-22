@@ -3,231 +3,42 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import type { CaseStudy, DemoProject } from "@/lib/caseStudies";
-import { type DemoTab, useDemoNavigation } from "./DemoShared";
+import type { CaseStudy } from "@/lib/caseStudies";
+import { maisonPressMentions, maisonProjects } from "@/lib/maisonForm";
+import MaisonShell from "./MaisonShell";
 
-const atelierPanels = [
-  { title: "Bespoke furniture", copy: "Quietly exact pieces developed for the room, the client, and the long life of the property.", detail: "Frame, finish, upholstery, and placement are resolved with the makers before installation." },
-  { title: "Specialist procurement", copy: "Stone, textiles, antiques, art, lighting, and objects sourced through a trusted international network.", detail: "Procurement is managed discreetly with samples, approvals, and documented provenance." },
-  { title: "Craft network", copy: "Makers, restorers, upholsterers, metalworkers, and finishers brought into the project at the right moment.", detail: "Each craft decision is selected for atmosphere and longevity, not spectacle." },
-  { title: "Installation", copy: "A precise final layer, coordinated room by room so the property feels complete when the doors open.", detail: "Placement, styling, lighting levels, flowers, and handover notes are handled by the studio." },
-  { title: "Stewardship", copy: "Aftercare, seasonal adjustments, and future acquisitions held with the same discretion as the first appointment.", detail: "The relationship continues quietly when a home needs to evolve." },
-];
-
-const disciplineIndex = [
+const disciplines = [
   { title: "Private Residences", copy: "Layered homes composed around arrival, privacy, ceremony, and the daily rituals of the principal client." },
   { title: "Hospitality", copy: "Guest spaces with atmosphere, operational grace, and a cinematic memory of service." },
   { title: "Atelier Procurement", copy: "Furniture, art, antiques, textiles, lighting, and makers coordinated through a single private process." },
   { title: "Installation Stewardship", copy: "Final placement, handover, aftercare, and future acquisitions held quietly by the studio." },
 ];
 
-const maisonStats = ["63 years of atelier heritage", "15+ countries", "100+ private commissions", "40+ craft partners"];
-
-const maisonTimeline = [
-  ["1963", "Founded in Paris as a private interiors atelier serving collectors and family residences."],
-  ["1980s", "Expanded into London townhouses and private apartments with a deeper craft network."],
-  ["2000s", "International hospitality commissions introduced a more cinematic, service-aware discipline."],
-  ["Today", "Atelier-led interiors, procurement, and installation stewardship across 15+ countries."],
-];
-
-const maisonPrinciples = [
-  ["Discretion", "Private information, family offices, and property access are handled with quiet precision."],
-  ["Provenance", "Materials, antiques, makers, and art are chosen for origin, suitability, and longevity."],
-  ["Atmosphere", "Rooms are composed for light, ceremony, comfort, and the memory they leave."],
-  ["Stewardship", "Aftercare and future acquisitions keep a home evolving without losing its original character."],
-];
-
-const projectDetailNotes = [
-  { notes: "A sequence of formal and informal rooms balanced through stone, antique oak, silk texture, and controlled shadow.", materials: "Limestone, dark oak, silk velvet, bronze, handwoven rugs", service: "Private residence / installation stewardship" },
-  { notes: "A quieter villa study where lake light is softened through pale plaster, linen, and low furniture profiles.", materials: "Pale plaster, linen, travertine, smoked timber", service: "Private residence / atelier procurement" },
-  { notes: "An intimate hospitality suite shaped around evening arrival, lacquered detail, and private dining service.", materials: "Lacquer, bronze mirror, mohair, smoked glass", service: "Hospitality interiors / bespoke furniture" },
-  { notes: "A members dining room with a slower rhythm: deep banquettes, candlelight, and concealed service circulation.", materials: "Walnut, leather, aged brass, low-gloss plaster", service: "Hospitality interiors / installation stewardship" },
-];
-
-function MaisonNav({ site, tabs, activeTab, selectTab }: { site: CaseStudy; tabs: DemoTab[]; activeTab: string; selectTab: (key: string) => void }) {
-  const [open, setOpen] = useState(false);
-  const current = tabs.find((tab) => tab.key === activeTab) ?? tabs[0];
-  const handleSelect = (key: string) => { selectTab(key); setOpen(false); };
-
-  return (
-    <header className="maison3-nav">
-      <button type="button" className="maison3-wordmark" onClick={() => handleSelect("home")}>{site.title}</button>
-      <div className="maison3-current" aria-live="polite"><span>Current</span><strong>{current?.label}</strong></div>
-      <div className={open ? "maison3-menu is-open" : "maison3-menu"} onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-        <button type="button" className="maison3-menu-trigger" aria-expanded={open} aria-controls="maison-navigation-menu" onClick={() => setOpen((value) => !value)} onFocus={() => setOpen(true)}><span>Menu</span></button>
-        <div id="maison-navigation-menu" className="maison3-menu-panel" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}>
-          {tabs.map((item) => <button key={item.key} type="button" className={activeTab === item.key ? "is-active" : ""} onClick={() => handleSelect(item.key)} aria-current={activeTab === item.key ? "page" : undefined}>{item.label}</button>)}
-          <Link href="/work">Back to Sleek Studio</Link>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function MaisonHome({ site, selectTab }: { site: CaseStudy; selectTab: (key: string) => void }) {
-  const [activeDiscipline, setActiveDiscipline] = useState(0);
-  const discipline = disciplineIndex[activeDiscipline];
-  return (
-    <section className="maison2-page maison3-home maison4-home" aria-labelledby="maison3-home-title">
-      <div className="maison4-hero maison4-reveal">
-        <div>
-          <p className="maison2-kicker">{site.hero.eyebrow}</p>
-          <h1 id="maison3-home-title">Private interiors, quietly composed.</h1>
-        </div>
-        <div className="maison4-hero-copy">
-          <p>{site.hero.copy}</p>
-          <p>Maison Form is presented as a discreet atelier for residences, hospitality interiors, procurement, and installation stewardship.</p>
-          <div className="maison3-hero-actions"><button type="button" onClick={() => selectTab("portfolio")}>View selected commissions</button><button type="button" onClick={() => selectTab("contact")}>Request a private appointment</button></div>
-        </div>
-      </div>
-      <div className="maison4-positioning maison4-reveal"><p>Luxury is treated as atmosphere, provenance, and precision — never noise.</p></div>
-      <div className="maison3-discipline-selector maison4-reveal" aria-label="Maison Form disciplines">
-        <div className="maison3-discipline-controls">
-          {disciplineIndex.map((item, index) => <button key={item.title} type="button" className={index === activeDiscipline ? "is-active" : ""} onMouseEnter={() => setActiveDiscipline(index)} onFocus={() => setActiveDiscipline(index)} onClick={() => setActiveDiscipline(index)}>{item.title}</button>)}
-        </div>
-        <div className="maison3-discipline-copy"><p className="maison2-kicker">Discipline</p><h2>{discipline.title}</h2><p>{discipline.copy}</p></div>
-      </div>
-      <div className="maison3-stat-strip maison4-scroll-stats maison4-reveal" aria-label="Maison Form studio credentials">{maisonStats.map((item) => <span key={item}>{item}</span>)}</div>
-      <div className="maison3-commission-teaser maison4-reveal"><div><p className="maison2-kicker">Selected commissions</p><h2>Private residences, dining rooms, suites, and atelier pieces held in one authored portfolio.</h2></div><button type="button" onClick={() => selectTab("portfolio")}>Enter portfolio</button></div>
-      <div className="maison2-process-teaser maison4-reveal">
-        {["Discretion", "Procurement", "Installation", "Stewardship"].map((item, index) => <article key={item}><span>{item}</span><h3>{item}</h3><p>{index === 0 ? "Private information, decision-makers, and site access are handled quietly." : index === 1 ? "Materials, makers, furniture, and objects are coordinated through the atelier." : index === 2 ? "Rooms are placed, lit, and styled with a controlled final layer." : "Aftercare keeps the home evolving without losing its original atmosphere."}</p></article>)}
-      </div>
-      <div className="maison2-authority-strip maison4-reveal">{site.press?.map((item) => <span key={item.source}>{item.source}</span>)}</div>
-      <div className="maison2-private-cta maison4-reveal"><p>For clients seeking discretion, atmosphere, and an exacting studio presence.</p><button type="button" onClick={() => selectTab("contact")}>Request a private appointment</button></div>
-    </section>
-  );
-}
-
-function MaisonStudio({ site, selectTab }: { site: CaseStudy; selectTab: (key: string) => void }) {
-  return (
-    <section className="maison2-page maison2-studio maison3-about" id="studio" aria-labelledby="maison2-studio-title">
-      <div className="maison2-studio-opening maison4-reveal"><p className="maison2-kicker">About Us</p><h2 id="maison2-studio-title">A Paris-born private interiors atelier with 63 years of quiet commissions.</h2><p>Founded in 1963, Maison Form is imagined as an established private-client studio: discreet, atelier-led, and fluent in private residences, hospitality projects, procurement, and exacting installation across 15+ countries.</p></div>
-      <div className="maison3-stat-strip maison3-about-stats maison4-scroll-stats maison4-reveal" aria-label="Maison Form heritage statistics">{["100+ completed commissions", "15+ countries", "3 generations of craft network", "Private residences, hotels, and atelier procurement"].map((item) => <span key={item}>{item}</span>)}</div>
-      <div className="maison2-principals maison4-reveal">{site.team?.map((person) => <article key={person.title}><span>Leadership</span><h3>{person.title}</h3><p>{person.copy}</p></article>)}</div>
-      <div className="maison3-timeline maison4-reveal">{maisonTimeline.map(([year, copy]) => <article key={year}><span>{year}</span><p>{copy}</p></article>)}</div>
-      <div className="maison3-principles maison4-reveal">{maisonPrinciples.map(([title, copy]) => <article key={title}><h3>{title}</h3><p>{copy}</p></article>)}</div>
-      <div className="maison2-international maison4-reveal"><h3>International commissions across 15+ countries, coordinated through discretion, procurement, and exacting site presence.</h3><div>{["Paris atelier", "London townhouses", "Geneva villas", "Hospitality suites"].map((item) => <span key={item}>{item}</span>)}</div></div>
-      <div className="maison2-timeline maison4-reveal">{site.process?.map((step) => <article key={step.title}><span>{step.title}</span><h3>{step.title}</h3><p>{step.copy}</p></article>)}</div>
-      <div className="maison3-closing-rule maison4-reveal"><p>The practice is deliberately private: senior attention, quiet coordination, and careful handover are treated as part of the design work.</p><button type="button" onClick={() => selectTab("portfolio")}>View portfolio</button></div>
-    </section>
-  );
-}
-
-function MaisonProjectDetail({ project, index, selectTab }: { project: DemoProject; index: number; selectTab: (key: string) => void }) {
-  const detail = projectDetailNotes[index % projectDetailNotes.length];
-  return (
-    <article className="maison3-project-detail" aria-live="polite">
-      <div><p className="maison2-kicker">Project detail</p><h3>{project.title}</h3><p>{project.description} {detail.notes}</p></div>
-      <dl><div><dt>Location</dt><dd>{project.location}</dd></div><div><dt>Category</dt><dd>{project.category}</dd></div><div><dt>Rooms / areas</dt><dd>Arrival, dining, retreat, principal suite, final installation</dd></div><div><dt>Materials</dt><dd>{detail.materials}</dd></div><div><dt>Related atelier service</dt><dd>{detail.service}</dd></div></dl>
-      <button type="button" onClick={() => selectTab("contact")}>Request a private appointment</button>
-    </article>
-  );
-}
-
-function MaisonPortfolio({ site, selectTab }: { site: CaseStudy; selectTab: (key: string) => void }) {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const selected = site.projects[selectedIndex] ?? site.projects[0];
-  const marquee = [...site.projects, ...site.projects];
-  return (
-    <section className="maison2-page maison2-portfolio" id="portfolio" aria-labelledby="maison2-portfolio-title">
-      <div className="maison2-section-head maison2-portfolio-opening maison4-reveal"><p className="maison2-kicker">Portfolio</p><h2 id="maison2-portfolio-title">Residences, hospitality rooms, and atelier commissions held as one private body of work.</h2><p>Maison Form presents each commission as a sequence of arrival, atmosphere, craft, and stewardship. Select a moving plate to open the project notes.</p></div>
-      <div className="maison2-marquee maison4-reveal" aria-label="Continuous Maison Form portfolio reel">
-        <div className="maison2-marquee-track">
-          {marquee.map((project, index) => {
-            const realIndex = index % site.projects.length;
-            return <button key={`${project.title}-${index}`} type="button" className="maison3-marquee-card" onClick={() => setSelectedIndex(realIndex)} onFocus={() => setSelectedIndex(realIndex)} onMouseEnter={() => setSelectedIndex(realIndex)}><Image src={project.image} alt={`${project.title} by ${site.title}`} width={820} height={560} className="maison2-image" sizes="(max-width: 900px) 72vw, 360px" loading="lazy" /><span><small>{project.category} · {project.location}</small><strong>{project.title}</strong><em>{project.description}</em></span></button>;
-          })}
-        </div>
-      </div>
-      {selected ? <MaisonProjectDetail project={selected} index={selectedIndex} selectTab={selectTab} /> : null}
-      <div className="maison2-portfolio-categories maison4-reveal">
-        {["Private residences", "Hospitality", "Atelier commissions"].map((title, index) => <article key={title}><h3>{title}</h3><p>{disciplineIndex[index].copy}</p></article>)}
-      </div>
-      <div className="maison2-portfolio-notes maison4-reveal">{site.projects.map((project) => <article key={project.title}><span>{project.location} / {project.year}</span><h3>{project.title}</h3><p>{project.description}</p></article>)}</div>
-      <div className="maison2-private-cta"><p>For private clients, portfolio conversations begin with discretion, property context, and the atmosphere the rooms should hold.</p><button type="button" onClick={() => selectTab("contact")}>Request a private appointment</button></div>
-    </section>
-  );
-}
-
-function MaisonAtelier({ site, selectTab }: { site: CaseStudy; selectTab: (key: string) => void }) {
-  const [open, setOpen] = useState(0);
-  const materialNotes = [
-    { title: "Stone and plaster", copy: "Samples are reviewed for tone, touch, and how they behave in evening light." },
-    { title: "Textile and softness", copy: "Fabric, rugs, and upholstery are selected for comfort, patina, and restraint." },
-    { title: "Antiques and art", copy: "Objects are chosen for provenance and proportion rather than decorative excess." },
-    { title: "Final placement", copy: "The room is completed through lighting levels, flowers, table objects, and handover notes." },
-  ];
-
-  return (
-    <section className="maison2-page maison2-atelier" id="atelier" aria-labelledby="maison2-atelier-title">
-      <div className="maison2-section-head maison4-reveal"><p className="maison2-kicker">Atelier</p><h2 id="maison2-atelier-title">Craft, procurement, and the final private layer.</h2><p>The atelier coordinates makers, finishes, furniture, art advisory, and installation with quiet precision.</p></div>
-      <div className="maison2-atelier-panels maison4-reveal">{atelierPanels.map((panel, index) => <article key={panel.title} className={open === index ? "is-open" : ""}><button type="button" onClick={() => setOpen(index)} onFocus={() => setOpen(index)}><span>{panel.title}</span><strong>{panel.title}</strong></button><p>{panel.copy}</p><em>{panel.detail}</em></article>)}</div>
-      <div className="maison4-material-notes maison4-reveal">{materialNotes.map((item) => <article key={item.title}><span>{item.title}</span><p>{item.copy}</p></article>)}</div>
-      <div className="maison3-closing-rule maison4-reveal"><p>{site.title} treats procurement and installation as atmosphere, not administration: each object is selected for provenance, proportion, and the way it holds the room.</p><button type="button" onClick={() => selectTab("contact")}>Discuss atelier support</button></div>
-    </section>
-  );
-}
-
-function MaisonPress({ site }: { site: CaseStudy }) {
-  const featured = site.press?.[0];
-  return (
-    <section className="maison2-page maison2-press maison3-press" id="press" aria-labelledby="maison2-press-title">
-      <div className="maison2-section-head maison4-reveal"><p className="maison2-kicker">Press & recognition</p><h2 id="maison2-press-title">Featured in international design journals and private-client circles.</h2><p>Recognition is treated as a quiet archive: publication notes, private referrals, and completed rooms that carry their own authority.</p></div>
-      <div className="maison3-press-stats maison4-scroll-stats maison4-reveal">{["International design journals", "Private residences", "Hospitality interiors", "Atelier procurement"].map((item) => <span key={item}>{item}</span>)}</div>
-      {featured ? <article className="maison3-featured-press maison4-reveal"><span>Featured story</span><h3>{featured.source}</h3><p>{featured.quote}</p></article> : null}
-      <div className="maison2-press-index maison4-reveal">{site.press?.map((item) => <blockquote key={item.source}><span>Recognition</span><cite>{item.source}</cite><p>{item.quote}</p></blockquote>)}</div>
-      <div className="maison3-awards maison4-reveal">{["Recognised for private residences", "Hospitality atmosphere and service", "Craft network and procurement", "International commissions across Europe, the Middle East, and North America"].map((item) => <p key={item}>{item}</p>)}</div>
-      <div className="maison3-closing-rule"><p>Press is intentionally quiet: the studio’s reputation is built through completed rooms, private referrals, and projects that can remain discreet.</p></div>
-    </section>
-  );
-}
-
-function MaisonContact({ site }: { site: CaseStudy }) {
-  const [submitted, setSubmitted] = useState(false);
-  const [dossier, setDossier] = useState({ propertyType: "Private residence", location: "London", focus: "Residence planning", privacy: "Principal-led and discreet", appointment: "Private studio appointment", areas: "Arrival, dining, principal suite", notes: "" });
-  const updateDossier = (key: keyof typeof dossier, value: string) => setDossier((current) => ({ ...current, [key]: value }));
-  return (
-    <section className="maison2-page maison3-contact maison4-contact" id="contact" aria-labelledby="maison2-contact-title">
-      <div className="maison3-contact-intro maison4-reveal"><p className="maison2-kicker">{site.contact.eyebrow}</p><h2 id="maison2-contact-title">Private appointment</h2><p>{site.contact.copy}</p><a href={`mailto:${site.contact.email}`}>{site.contact.email}</a><span>All enquiries handled in confidence · 63 years of studio heritage · 40+ craft partners</span></div>
-      <div className="maison2-dossier-builder maison4-reveal" aria-label="Private commission dossier builder">
-        <div className="maison2-builder-head"><p className="maison2-kicker">Private dossier builder</p><h3>Prepare the shape of a confidential appointment.</h3><p>Select the details that best describe the commission. This stays local to the preview and prepares a refined summary only.</p></div>
-        <div className="maison2-builder-grid">
-          <label><span>Property type</span><select value={dossier.propertyType} onChange={(event) => updateDossier("propertyType", event.target.value)}><option>Private residence</option><option>International residence</option><option>Hospitality suite</option><option>Atelier procurement</option></select></label>
-          <label><span>Location</span><select value={dossier.location} onChange={(event) => updateDossier("location", event.target.value)}><option>London</option><option>Paris</option><option>Geneva</option><option>New York</option><option>Private estate</option></select></label>
-          <label><span>Project focus</span><select value={dossier.focus} onChange={(event) => updateDossier("focus", event.target.value)}><option>Residence planning</option><option>Hospitality atmosphere</option><option>Atelier procurement</option><option>Installation stewardship</option></select></label>
-          <label><span>Privacy level</span><select value={dossier.privacy} onChange={(event) => updateDossier("privacy", event.target.value)}><option>Principal-led and discreet</option><option>Private office coordination</option><option>Family office introduction</option><option>Representative-led appointment</option></select></label>
-          <label><span>Appointment type</span><select value={dossier.appointment} onChange={(event) => updateDossier("appointment", event.target.value)}><option>Private studio appointment</option><option>Site visit</option><option>Private office call</option><option>Atelier review</option></select></label>
-          <label><span>Key rooms / areas</span><input value={dossier.areas} onChange={(event) => updateDossier("areas", event.target.value)} /></label>
-          <label className="maison3-builder-notes"><span>Notes for the principal or private office</span><textarea value={dossier.notes} onChange={(event) => updateDossier("notes", event.target.value)} rows={5} placeholder="Share privacy considerations, decision-makers, or rooms that require particular attention." /></label>
-        </div>
-        <div className="maison2-builder-summary"><span>Private dossier prepared</span><p>Recommended next step: private appointment.</p><p>Focus areas: {dossier.focus.toLowerCase()}, {dossier.propertyType.toLowerCase()}, {dossier.areas.toLowerCase()}.</p><p>The atelier would respond privately with appointment availability.</p></div>
-      </div>
-      <form className={submitted ? "maison2-dossier maison4-reveal is-submitted" : "maison2-dossier maison4-reveal"} onSubmit={(event) => { event.preventDefault(); setSubmitted(true); }}>
-        {submitted ? <div className="maison2-seal" role="status"><span>Request received privately</span><p>Thank you — the atelier would respond privately with appointment availability.</p></div> : <>
-          <fieldset><legend>Representative</legend><label><span>Representative / assistant contact</span><input name="representative" type="text" autoComplete="name" required /></label><label><span>Email</span><input name="email" type="email" autoComplete="email" required /></label></fieldset>
-          <fieldset><legend>Property</legend><label><span>Preferred appointment location</span><input name="location" type="text" placeholder="London, Paris, Geneva, New York, private estate…" required /></label><label><span>Property type</span><select name="propertyType" defaultValue="" required><option value="" disabled>Select one</option><option>Private residence</option><option>International residence</option><option>Hospitality suite</option><option>Atelier procurement</option></select></label></fieldset>
-          <fieldset><legend>Appointment</legend><label><span>Appointment preference</span><input name="appointment" type="text" placeholder="Principal introduction, private office call, atelier appointment, or site visit" required /></label></fieldset>
-          <fieldset className="maison2-confidential"><legend>Confidential note</legend><label><span>Confidential project note</span><textarea name="message" rows={9} placeholder="Share property context, decision-makers, privacy considerations, and desired appointment cadence." required /></label></fieldset>
-          <button type="submit">Request a private appointment</button><p className="maison2-note">Preview note — this concept form confirms locally and does not send email.</p>
-        </>}
-      </form>
-    </section>
-  );
-}
-
 export default function MaisonFormDemo({ site }: { site: CaseStudy }) {
-  const { tabs, activeTab, selectTab } = useDemoNavigation(site);
+  const [activeDiscipline, setActiveDiscipline] = useState(0);
+  const discipline = disciplines[activeDiscipline];
+  const marquee = [...maisonProjects, ...maisonProjects];
+
   return (
-    <article className="demo-site maison2-site" id="home">
-      <MaisonNav site={site} tabs={tabs} activeTab={activeTab} selectTab={selectTab} />
-      <main>
-        {activeTab === "home" ? <MaisonHome site={site} selectTab={selectTab} /> : null}
-        {activeTab === "studio" ? <MaisonStudio site={site} selectTab={selectTab} /> : null}
-        {activeTab === "portfolio" ? <MaisonPortfolio site={site} selectTab={selectTab} /> : null}
-        {activeTab === "atelier" ? <MaisonAtelier site={site} selectTab={selectTab} /> : null}
-        {activeTab === "press" ? <MaisonPress site={site} /> : null}
-        {activeTab === "contact" ? <MaisonContact site={site} /> : null}
-      </main>
-    </article>
+    <MaisonShell current="Home">
+      <section className="maison2-page maison3-home maison4-home" aria-labelledby="maison-home-title">
+        <div className="maison4-hero maison4-reveal">
+          <div><p className="maison2-kicker">{site.hero.eyebrow}</p><h1 id="maison-home-title">Private interiors, quietly composed.</h1></div>
+          <div className="maison4-hero-copy"><p>{site.hero.copy}</p><p>Maison Form is an illustrative private-practice concept showing how Sleek Studio’s White Glove tier can hold residences, hospitality, editorial publishing, procurement, and private enquiry in one authored digital estate.</p><div className="maison3-hero-actions"><Link href="/work/maison-form/projects">View selected commissions</Link><Link href="/work/maison-form/contact">Request a private appointment</Link></div></div>
+        </div>
+        <div className="maison4-positioning maison4-reveal"><p>Luxury is treated as atmosphere, provenance, and precision — never noise.</p></div>
+        <div className="maison3-discipline-selector maison4-reveal" aria-label="Maison Form disciplines">
+          <div className="maison3-discipline-controls">{disciplines.map((item, index) => <button key={item.title} type="button" className={index === activeDiscipline ? "is-active" : ""} onMouseEnter={() => setActiveDiscipline(index)} onFocus={() => setActiveDiscipline(index)} onClick={() => setActiveDiscipline(index)}>{item.title}</button>)}</div>
+          <div className="maison3-discipline-copy"><p className="maison2-kicker">Discipline</p><h2>{discipline.title}</h2><p>{discipline.copy}</p></div>
+        </div>
+        <div className="maison3-stat-strip maison4-scroll-stats maison4-reveal" aria-label="Maison Form concept capabilities"><span>Multi-page White Glove architecture</span><span>Long-form project stories</span><span>Journal & editorial system</span><span>Private enquiry journey</span></div>
+        <div className="maison3-commission-teaser maison4-reveal"><div><p className="maison2-kicker">Selected commissions</p><h2>Private residences and hospitality rooms held in a deeper project library.</h2></div><Link href="/work/maison-form/projects">Enter projects</Link></div>
+        <div className="maison2-marquee maison4-reveal" aria-label="Continuous Maison Form project preview"><div className="maison2-marquee-track">{marquee.map((project, index) => <Link key={`${project.slug}-${index}`} href={`/work/maison-form/projects/${project.slug}`} className="maison3-marquee-card"><Image src={project.image} alt={`${project.title} illustrative interior`} width={820} height={560} className="maison2-image" sizes="(max-width: 900px) 72vw, 360px" loading="lazy" /><span><small>{project.category} · {project.location}</small><strong>{project.title}</strong><em>{project.description}</em></span></Link>)}</div></div>
+        <div className="maison2-process-teaser maison4-reveal">{[["Discretion","Private information, decision-makers, and site access are handled quietly."],["Procurement","Materials, makers, furniture, and objects are coordinated through the atelier."],["Installation","Rooms are placed, lit, and styled with a controlled final layer."],["Stewardship","Aftercare keeps the home evolving without losing its original atmosphere."]].map(([title, copy]) => <article key={title}><span>{title}</span><h2>{title}</h2><p>{copy}</p></article>)}</div>
+        <div className="maison4-editorial-teaser maison4-reveal"><div><p className="maison2-kicker">Journal</p><h2>Material notes, atmosphere, and private-practice thinking.</h2><p>The flagship concept now demonstrates a real editorial publishing layer rather than only portfolio and service states.</p></div><Link href="/work/maison-form/journal">Read the journal</Link></div>
+        <div className="maison2-authority-strip maison4-reveal" aria-label="Illustrative recognition sources">{maisonPressMentions.map((item) => <span key={item.source}>{item.source} · concept</span>)}</div>
+        <div className="maison2-private-cta maison4-reveal"><p>For a sample private-client journey built around discretion, atmosphere, and exacting presentation.</p><Link href="/work/maison-form/contact">Request a private appointment</Link></div>
+      </section>
+    </MaisonShell>
   );
 }
