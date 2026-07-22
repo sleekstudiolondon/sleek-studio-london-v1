@@ -16,38 +16,19 @@ const SOCIAL_LINKS = [
   { label: "TikTok", href: "https://tiktok.com/@sleekstudiolondon" },
 ];
 
+function isStandaloneDemo(pathname: string) {
+  return /^\/work\/(john-doe|studio-alter)(?:\/.*)?$/.test(pathname) || /^\/work\/maison-form(?:\/.*)?$/.test(pathname);
+}
+
 export default function Footer() {
   const pathname = usePathname();
-  const isDemoWebsite = /^\/work\/[^/]+$/.test(pathname);
-
-  if (isDemoWebsite) return null;
+  if (isStandaloneDemo(pathname)) return null;
 
   return (
     <footer className="footer-shell">
       <div className="container-luxe footer-inner footer-inner-expanded">
-        <div className="footer-brand footer-brand-stack">
-          <Link className="footer-studio-name" href="/" aria-label="Sleek Studio London home">
-            Sleek Studio London
-          </Link>
-          <p className="footer-note">Luxury web design for interior designers.</p>
-          <p className="footer-note">© {new Date().getFullYear()} Sleek Studio London. Limited clients per cycle.</p>
-        </div>
-        <div className="footer-nav-groups">
-          <nav className="footer-links" aria-label="Footer navigation">
-            {FOOTER_LINKS.map((item) => (
-              <Link key={item.href} href={item.href} className="footer-link">
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-          <nav className="footer-links footer-social-links" aria-label="Social links">
-            {SOCIAL_LINKS.map((item) => (
-              <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className="footer-link">
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </div>
+        <div className="footer-brand footer-brand-stack"><Link className="footer-studio-name" href="/" aria-label="Sleek Studio London home">Sleek Studio London</Link><p className="footer-note">Luxury web design for interior designers.</p><p className="footer-note">© {new Date().getFullYear()} Sleek Studio London. Limited clients per cycle.</p></div>
+        <div className="footer-nav-groups"><nav className="footer-links" aria-label="Footer navigation">{FOOTER_LINKS.map((item) => <Link key={item.href} href={item.href} className="footer-link">{item.label}</Link>)}</nav><nav className="footer-links footer-social-links" aria-label="Social links">{SOCIAL_LINKS.map((item) => <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className="footer-link">{item.label}</a>)}</nav></div>
       </div>
     </footer>
   );
