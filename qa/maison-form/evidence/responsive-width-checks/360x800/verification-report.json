@@ -1,0 +1,58 @@
+{
+  "viewport": "360x800",
+  "width": 360,
+  "height": 800,
+  "mobileParityScope": "Faithful responsive implementation only; no canonical mobile screenshot-exact reference was supplied.",
+  "routes": [
+    {
+      "route": "/work/maison-form",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/360x800/home.jpg"
+    },
+    {
+      "route": "/work/maison-form/projects",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/360x800/projects.jpg"
+    },
+    {
+      "route": "/work/maison-form/projects/maison-rivoli",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/360x800/maison-rivoli.jpg"
+    },
+    {
+      "route": "/work/maison-form/practice",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/360x800/practice.jpg"
+    },
+    {
+      "route": "/work/maison-form/about-us",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/360x800/about-us.jpg"
+    },
+    {
+      "route": "/work/maison-form/journal",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/360x800/journal.jpg"
+    },
+    {
+      "route": "/work/maison-form/journal/material-memory",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/360x800/material-memory.jpg"
+    },
+    {
+      "route": "/work/maison-form/press",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/360x800/press.jpg"
+    },
+    {
+      "route": "/work/maison-form/contact",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/360x800/contact.jpg"
+    }
+  ],
+  "menu": {
+    "expanded": true,
+    "artVisible": false,
+    "screenshot": "qa/maison-form/evidence/responsive-width-checks/360x800/menu-open.jpg"
+  }
+}

@@ -1,0 +1,762 @@
+[
+  {
+    "file": "01-home__viewport-1363x936.jpg",
+    "route": "/work/maison-form",
+    "comparisonMode": "regions",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.20515634713614603,
+    "effectiveDiffRatio": 0.1945110266549596,
+    "maxEffectiveDiffRatio": null,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/01-home__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/01-home__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/01-home__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      }
+    ],
+    "regions": [
+      {
+        "name": "transparent home header over canonical hero image",
+        "diffRatio": 0.13018481486259836,
+        "maxDiffRatio": 0.14,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "hero image and headline composition",
+        "diffRatio": 0.21538081107814044,
+        "maxDiffRatio": 0.22,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "hero footer rule and metadata",
+        "diffRatio": 0.1001730959446093,
+        "maxDiffRatio": 0.105,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "02-projects--filter-all__viewport-1363x936.jpg",
+    "route": "/work/maison-form/projects",
+    "comparisonMode": "whole",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.029972409328915407,
+    "effectiveDiffRatio": 0.028882882247758458,
+    "maxEffectiveDiffRatio": 0.085,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/02-projects--filter-all__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/02-projects--filter-all__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/02-projects--filter-all__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.04901786866210812,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro title and supporting copy",
+        "diffRatio": 0.03947953422724065,
+        "maxDiffRatio": 0.135,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro lower rule or first content edge",
+        "diffRatio": 0.029800139640425903,
+        "maxDiffRatio": 0.09,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "03-project-maison-rivoli__viewport-1363x936.jpg",
+    "route": "/work/maison-form/projects/maison-rivoli",
+    "comparisonMode": "regions",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.11557078401086963,
+    "effectiveDiffRatio": 0.11460382872634284,
+    "maxEffectiveDiffRatio": null,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/03-project-maison-rivoli__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/03-project-maison-rivoli__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/03-project-maison-rivoli__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.04901786866210812,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "case metadata and title",
+        "diffRatio": 0.06482937685459941,
+        "maxDiffRatio": 0.14,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "case hero image crop",
+        "diffRatio": 0.17293109668109669,
+        "maxDiffRatio": 0.175,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "04-practice__viewport-1363x936.jpg",
+    "route": "/work/maison-form/practice",
+    "comparisonMode": "whole",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.054509200094852946,
+    "effectiveDiffRatio": 0.053251437214399705,
+    "maxEffectiveDiffRatio": 0.105,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/04-practice__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/04-practice__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/04-practice__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.04901786866210812,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro title and supporting copy",
+        "diffRatio": 0.07753352152434721,
+        "maxDiffRatio": 0.135,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro lower rule or first content edge",
+        "diffRatio": 0.05010473031942748,
+        "maxDiffRatio": 0.09,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "05-about-us__viewport-1363x936.jpg",
+    "route": "/work/maison-form/about-us",
+    "comparisonMode": "whole",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.06086530881683768,
+    "effectiveDiffRatio": 0.05976616826143523,
+    "maxEffectiveDiffRatio": 0.11,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/05-about-us__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/05-about-us__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/05-about-us__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.04901786866210812,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro title and supporting copy",
+        "diffRatio": 0.09396436132674665,
+        "maxDiffRatio": 0.135,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro lower rule or first content edge",
+        "diffRatio": 0.042638331296910456,
+        "maxDiffRatio": 0.09,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "06-journal__viewport-1363x936.jpg",
+    "route": "/work/maison-form/journal",
+    "comparisonMode": "whole",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.05743409963404708,
+    "effectiveDiffRatio": 0.056003294217174794,
+    "maxEffectiveDiffRatio": 0.11,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/06-journal__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/06-journal__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/06-journal__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.04901786866210812,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro title and supporting copy",
+        "diffRatio": 0.07473535638673254,
+        "maxDiffRatio": 0.135,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro lower rule or first content edge",
+        "diffRatio": 0.06451387676732415,
+        "maxDiffRatio": 0.09,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "07-journal-material-memory__viewport-1363x936.jpg",
+    "route": "/work/maison-form/journal/material-memory",
+    "comparisonMode": "regions",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.09387557600733187,
+    "effectiveDiffRatio": 0.09239990771064724,
+    "maxEffectiveDiffRatio": null,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/07-journal-material-memory__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/07-journal-material-memory__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/07-journal-material-memory__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.04901786866210812,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "article header composition",
+        "diffRatio": 0.1032226899454834,
+        "maxDiffRatio": 0.13,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "article image crop",
+        "diffRatio": 0.09149727552712628,
+        "maxDiffRatio": 0.16,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "08-press__viewport-1363x936.jpg",
+    "route": "/work/maison-form/press",
+    "comparisonMode": "whole",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.052107433779184906,
+    "effectiveDiffRatio": 0.04999647505944332,
+    "maxEffectiveDiffRatio": 0.09,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/08-press__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/08-press__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/08-press__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.04901786866210812,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro title and supporting copy",
+        "diffRatio": 0.07191249117854623,
+        "maxDiffRatio": 0.135,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro lower rule or first content edge",
+        "diffRatio": 0.06589718973642869,
+        "maxDiffRatio": 0.09,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "09-contact__viewport-1363x936.jpg",
+    "route": "/work/maison-form/contact",
+    "comparisonMode": "whole",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.041788170299491764,
+    "effectiveDiffRatio": 0.03972928456524665,
+    "maxEffectiveDiffRatio": 0.09,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/09-contact__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/09-contact__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/09-contact__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.04901786866210812,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro title and supporting copy",
+        "diffRatio": 0.061243824982357094,
+        "maxDiffRatio": 0.135,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "intro lower rule or first content edge",
+        "diffRatio": 0.028421190434630827,
+        "maxDiffRatio": 0.09,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "10-home--menu-open-desktop__viewport-1363x936.jpg",
+    "route": "/work/maison-form",
+    "comparisonMode": "regions",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.03928692364128901,
+    "effectiveDiffRatio": 0.038767236676260884,
+    "maxEffectiveDiffRatio": null,
+    "comparedWidth": 1363,
+    "comparedHeight": 936,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/10-home--menu-open-desktop__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/10-home--menu-open-desktop__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/10-home--menu-open-desktop__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical cursor capture",
+        "reason": "Cursor is baked into the canonical screenshot and is not product UI.",
+        "x": 1235,
+        "y": 24,
+        "width": 70,
+        "height": 55
+      }
+    ],
+    "regions": [
+      {
+        "name": "menu header band",
+        "diffRatio": 0.030040830648505535,
+        "maxDiffRatio": 0.07,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "menu artwork crop",
+        "diffRatio": 0.046915644741731696,
+        "maxDiffRatio": 0.18,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "menu navigation panel",
+        "diffRatio": 0.03884142173615858,
+        "maxDiffRatio": 0.13,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "11-projects--filter-residential__viewport-1363x936.jpg",
+    "route": "/work/maison-form/projects",
+    "comparisonMode": "regions",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.06569928411661785,
+    "effectiveDiffRatio": 0.06360675122251347,
+    "maxEffectiveDiffRatio": null,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/11-projects--filter-residential__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/11-projects--filter-residential__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/11-projects--filter-residential__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      },
+      {
+        "name": "canonical cursor capture",
+        "reason": "Cursor is baked into the canonical screenshot and is not product UI.",
+        "x": 1058,
+        "y": 435,
+        "width": 82,
+        "height": 76
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.062201651399819376,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "filtered intro summary and controls",
+        "diffRatio": 0.023194856577645896,
+        "maxDiffRatio": 0.095,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "filtered project result crop",
+        "diffRatio": 0.1758665458937198,
+        "maxDiffRatio": 0.18,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "12-projects--filter-hospitality__viewport-1363x936.jpg",
+    "route": "/work/maison-form/projects",
+    "comparisonMode": "regions",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.057817036358159594,
+    "effectiveDiffRatio": 0.05493379520736264,
+    "maxEffectiveDiffRatio": null,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/12-projects--filter-hospitality__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/12-projects--filter-hospitality__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/12-projects--filter-hospitality__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      },
+      {
+        "name": "canonical cursor capture",
+        "reason": "Cursor is baked into the canonical screenshot and is not product UI.",
+        "x": 1158,
+        "y": 435,
+        "width": 82,
+        "height": 76
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.04101890078699522,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "filtered intro summary and controls",
+        "diffRatio": 0.023207220573689416,
+        "maxDiffRatio": 0.095,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "filtered project result crop",
+        "diffRatio": 0.15265398550724638,
+        "maxDiffRatio": 0.18,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "13-projects--filter-objects__viewport-1363x936.jpg",
+    "route": "/work/maison-form/projects",
+    "comparisonMode": "regions",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.03326101864373105,
+    "effectiveDiffRatio": 0.03027202927623357,
+    "maxEffectiveDiffRatio": null,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/13-projects--filter-objects__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/13-projects--filter-objects__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/13-projects--filter-objects__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      },
+      {
+        "name": "canonical cursor capture",
+        "reason": "Cursor is baked into the canonical screenshot and is not product UI.",
+        "x": 1240,
+        "y": 435,
+        "width": 78,
+        "height": 76
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.04101890078699522,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "filtered intro summary and controls",
+        "diffRatio": 0.023242251895812728,
+        "maxDiffRatio": 0.095,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "objects empty-state message",
+        "diffRatio": 0.09862612612612613,
+        "maxDiffRatio": 0.12,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  },
+  {
+    "file": "14-contact--success-state__viewport-1363x936.jpg",
+    "route": "/work/maison-form/contact",
+    "comparisonMode": "whole",
+    "pixelmatchThreshold": 0.08,
+    "rawDiffRatio": 0.04091895200312758,
+    "effectiveDiffRatio": 0.034623728618031036,
+    "maxEffectiveDiffRatio": 0.09,
+    "comparedWidth": 1348,
+    "comparedHeight": 926,
+    "generatedScreenshot": "qa/maison-form/evidence/desktop-reference-comparison/generated/14-contact--success-state__viewport-1363x936.png",
+    "canonicalReference": "qa/maison-form/evidence/desktop-reference-comparison/reference/14-contact--success-state__viewport-1363x936.jpg",
+    "diffImage": "qa/maison-form/evidence/desktop-reference-comparison/diff/14-contact--success-state__viewport-1363x936.diff.png",
+    "masks": [
+      {
+        "name": "canonical browser scrollbar gutter",
+        "reason": "The canonical JPEG includes browser scrollbar pixels that are outside Maison product UI.",
+        "x": 1332,
+        "y": 0,
+        "width": 16,
+        "height": 926
+      },
+      {
+        "name": "canonical cursor capture",
+        "reason": "Cursor is baked into the canonical screenshot and is not product UI.",
+        "x": 420,
+        "y": 435,
+        "width": 82,
+        "height": 78
+      }
+    ],
+    "regions": [
+      {
+        "name": "header/navigation band",
+        "diffRatio": 0.03763224100116114,
+        "maxDiffRatio": 0.065,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "success message and contact details",
+        "diffRatio": 0.07033482346501231,
+        "maxDiffRatio": 0.125,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      },
+      {
+        "name": "footer boundary",
+        "diffRatio": 0.00003197585183669293,
+        "maxDiffRatio": 0.08,
+        "passed": true,
+        "expectedDeviation": "browser rasterisation difference"
+      }
+    ],
+    "classifications": [
+      "browser rasterisation difference",
+      "genuine framework/platform constraint"
+    ],
+    "passed": true
+  }
+]
