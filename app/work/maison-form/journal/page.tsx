@@ -16,6 +16,7 @@ export default function MaisonJournalPage() {
           </>
         }
         intro="Material studies, conversations and observations from the imagined Maison Form studio."
+        compact
       />
       <section className="mf-journal-grid">
         {journalEntries.map((entry) => (

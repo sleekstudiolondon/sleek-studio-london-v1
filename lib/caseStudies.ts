@@ -265,8 +265,7 @@ export const caseStudies: CaseStudy[] = [
     outcome:
       "The practice can speak to international residential and hospitality clients with a polished, high-authority digital presence.",
     style: "Deep ink, ivory, muted bronze, cinematic imagery, layered editorial layouts",
-    image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1800&q=78&fm=webp",
+    image: "/work/maison-form/maison-hero.webp",
     palette: "demo-maison",
     nav: [
       { label: "Home", href: "#home" },

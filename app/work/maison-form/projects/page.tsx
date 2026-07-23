@@ -12,6 +12,7 @@ export default function MaisonProjectsPage() {
           </>
         }
         intro="Residences, retreats and places of gathering, each shaped by its own light, history and way of living."
+        compact
       />
       <MaisonProjectLibrary />
     </>

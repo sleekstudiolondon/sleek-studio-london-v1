@@ -1,12 +1,24 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 export default function MaisonEnquiryForm() {
   const [submitted, setSubmitted] = useState(false);
+  const firstFieldRef = useRef<HTMLInputElement>(null);
+  const resetButtonRef = useRef<HTMLButtonElement>(null);
+  const hasSubmittedRef = useRef(false);
+
+  useEffect(() => {
+    if (submitted) {
+      resetButtonRef.current?.focus();
+    } else if (hasSubmittedRef.current) {
+      firstFieldRef.current?.focus();
+    }
+  }, [submitted]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    hasSubmittedRef.current = true;
     setSubmitted(true);
   }
 
@@ -19,7 +31,7 @@ export default function MaisonEnquiryForm() {
           This is a demonstration form, so nothing has been transmitted. A live White Glove site would connect this
           moment to the studio&apos;s preferred enquiry workflow.
         </p>
-        <button type="button" onClick={() => setSubmitted(false)}>
+        <button ref={resetButtonRef} type="button" onClick={() => setSubmitted(false)}>
           Return to form
         </button>
       </div>
@@ -28,9 +40,10 @@ export default function MaisonEnquiryForm() {
 
   return (
     <form className="mf-enquiry-form" onSubmit={handleSubmit}>
+      <p className="mf-form-intro">Private enquiry / 01—04</p>
       <label>
         <span>Your name *</span>
-        <input name="name" autoComplete="name" required />
+        <input ref={firstFieldRef} name="name" autoComplete="name" required />
       </label>
       <label>
         <span>Email address *</span>
@@ -60,6 +73,10 @@ export default function MaisonEnquiryForm() {
         <input name="consent" type="checkbox" required />
         <span>I understand this is a fictional demonstration and no enquiry will be sent.</span>
       </label>
+      <p className="mf-form-disclosure mf-field-full">
+        Demonstration only — submitting this form changes this page locally and does not send an email, request or
+        other network transmission.
+      </p>
       <button className="mf-submit" type="submit">
         Submit private enquiry ↗
       </button>

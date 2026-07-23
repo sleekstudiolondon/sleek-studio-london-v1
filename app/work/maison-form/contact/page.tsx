@@ -6,16 +6,28 @@ export default function MaisonContactPage() {
     <>
       <MaisonPageIntro
         eyebrow="Private enquiries"
-        title={
-          <>
-            <span>Begin a</span>
-            <em>conversation.</em>
-          </>
-        }
-        intro="Tell us about the place, the life it will hold and what draws you to Maison Form."
+        title="Private Enquiries"
+        intro="Begin a conversation. Tell us about the place, the life it will hold and what draws you to Maison Form."
+        compact
       />
       <section className="mf-contact-layout">
         <aside>
+          <p className="mf-eyebrow">A considered beginning</p>
+          <h2>Private, from the first note.</h2>
+          <p>
+            Share only the details that feel useful. We use this fictional form to demonstrate the tone and structure of
+            a private-client enquiry, not to collect information.
+          </p>
+          <div className="mf-contact-notes">
+            <p>
+              <span>01</span>
+              A short introduction
+            </p>
+            <p>
+              <span>02</span>
+              A considered reply
+            </p>
+          </div>
           <p className="mf-eyebrow">Studio</p>
           <p>
             London · Paris
@@ -27,7 +39,7 @@ export default function MaisonContactPage() {
             <br />
             +44 (0)20 0000 0000
           </p>
-          <p>Demonstration details only.</p>
+          <p>Demonstration details only. Nothing entered here is transmitted or retained.</p>
         </aside>
         <MaisonEnquiryForm />
       </section>

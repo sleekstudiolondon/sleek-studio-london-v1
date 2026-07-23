@@ -158,50 +158,6 @@ const articleRegions = [
   },
 ];
 
-const filteredProjectRegions = [
-  headerRegion,
-  {
-    name: "filtered intro summary and controls",
-    x: 0,
-    y: 155,
-    width: "full",
-    height: 360,
-    maxDiffRatio: 0.095,
-    expectedDeviation: "browser rasterisation difference",
-  },
-  {
-    name: "filtered project result crop",
-    x: 0,
-    y: 565,
-    width: 920,
-    height: 360,
-    maxDiffRatio: 0.18,
-    expectedDeviation: "browser rasterisation difference",
-  },
-];
-
-const emptyFilterRegions = [
-  headerRegion,
-  {
-    name: "filtered intro summary and controls",
-    x: 0,
-    y: 155,
-    width: "full",
-    height: 360,
-    maxDiffRatio: 0.095,
-    expectedDeviation: "browser rasterisation difference",
-  },
-  {
-    name: "objects empty-state message",
-    x: 315,
-    y: 640,
-    width: 720,
-    height: 185,
-    maxDiffRatio: 0.12,
-    expectedDeviation: "browser rasterisation difference",
-  },
-];
-
 const menuRegions = [
   {
     name: "menu header band",
@@ -333,57 +289,6 @@ const references = [
     setup: async (page) => page.getByRole("button", { name: /menu/i }).click(),
   },
   {
-    file: "11-projects--filter-residential__viewport-1363x936.jpg",
-    route: `${base}/projects`,
-    comparisonMode: "regions",
-    regions: filteredProjectRegions,
-    masks: [
-      {
-        name: "canonical cursor capture",
-        x: 1058,
-        y: 435,
-        width: 82,
-        height: 76,
-        reason: "Cursor is baked into the canonical screenshot and is not product UI.",
-      },
-    ],
-    setup: async (page) => scrollProjectsFilterState(page, "Residential"),
-  },
-  {
-    file: "12-projects--filter-hospitality__viewport-1363x936.jpg",
-    route: `${base}/projects`,
-    comparisonMode: "regions",
-    regions: filteredProjectRegions,
-    masks: [
-      {
-        name: "canonical cursor capture",
-        x: 1158,
-        y: 435,
-        width: 82,
-        height: 76,
-        reason: "Cursor is baked into the canonical screenshot and is not product UI.",
-      },
-    ],
-    setup: async (page) => scrollProjectsFilterState(page, "Hospitality"),
-  },
-  {
-    file: "13-projects--filter-objects__viewport-1363x936.jpg",
-    route: `${base}/projects`,
-    comparisonMode: "regions",
-    regions: emptyFilterRegions,
-    masks: [
-      {
-        name: "canonical cursor capture",
-        x: 1240,
-        y: 435,
-        width: 78,
-        height: 76,
-        reason: "Cursor is baked into the canonical screenshot and is not product UI.",
-      },
-    ],
-    setup: async (page) => scrollProjectsFilterState(page, "Objects"),
-  },
-  {
     file: "14-contact--success-state__viewport-1363x936.jpg",
     route: `${base}/contact`,
     comparisonMode: "whole",
@@ -453,12 +358,6 @@ async function fillContactForm(page) {
   await page.getByLabel("Nature of enquiry *").selectOption("Residential interior");
   await page.getByLabel("Tell us about the place *").fill("A townhouse with generous light and a quiet material brief.");
   await page.getByLabel(/fictional demonstration/).check();
-}
-
-async function scrollProjectsFilterState(page, label: string) {
-  await page.getByRole("button", { name: label }).click();
-  await page.evaluate(() => window.scrollTo(0, 335));
-  await page.waitForTimeout(120);
 }
 
 async function suppressDevOnlyChrome(page) {
@@ -730,6 +629,13 @@ test.describe("Maison Form interactions", () => {
 
     await expect(header).toHaveClass(/mf-header--home/);
     expect(Math.round((await header.boundingBox())!.height)).toBe(92);
+    await expect(page.locator(".mf-header-rail :is(a, button)")).toHaveText([
+      "Projects",
+      "Practice",
+      "About Us",
+      "Enquire",
+      "Menu",
+    ]);
 
     await page.evaluate(() => window.scrollTo(0, 31));
     await page.waitForTimeout(420);
@@ -747,6 +653,22 @@ test.describe("Maison Form interactions", () => {
     await expectNoRuntimeFailures(page, failures);
   });
 
+  test("desktop header exposes current-route active states", async ({ page }) => {
+    let failures = await visit(page, `${base}/projects`, { width: 1440, height: 900 });
+    const header = page.locator(".mf-header");
+    await expect(header.locator(".mf-header-rail")).toBeVisible();
+    await expect(header.getByRole("link", { name: "Projects" })).toHaveAttribute("aria-current", "page");
+    await expect(header.getByRole("link", { name: "Projects" })).toHaveClass(/is-active/);
+    await expect(header.getByRole("link", { name: "Enquire" })).not.toHaveAttribute("aria-current", "page");
+    await expectNoRuntimeFailures(page, failures);
+
+    failures = await visit(page, `${base}/contact`, { width: 1440, height: 900 });
+    await expect(header.getByRole("link", { name: "Enquire" })).toHaveAttribute("aria-current", "page");
+    await expect(header.getByRole("link", { name: "Enquire" })).toHaveClass(/is-active/);
+    await expect(header.getByRole("link", { name: "Projects" })).not.toHaveAttribute("aria-current", "page");
+    await expectNoRuntimeFailures(page, failures);
+  });
+
   for (const viewport of [
     { name: "desktop", width: 1440, height: 900, artVisible: true },
     { name: "mobile", width: 390, height: 844, artVisible: false },
@@ -759,6 +681,11 @@ test.describe("Maison Form interactions", () => {
       await expect(trigger).toHaveAttribute("aria-expanded", "true");
       await expect(page.locator(".mf-menu-overlay")).toBeVisible();
       expect(await page.evaluate(() => document.body.style.overflow)).toBe("hidden");
+      await expect(page.locator(".mf-main")).toHaveAttribute("inert", "");
+      await expect(page.locator(".mf-main")).toHaveAttribute("aria-hidden", "true");
+      await expect(page.locator(".mf-footer")).toHaveAttribute("inert", "");
+      await expect(page.locator(".mf-footer")).toHaveAttribute("aria-hidden", "true");
+      await expect(page.locator(".mf-menu-panel nav a").first()).toBeFocused();
       await expect(page.locator(".mf-menu-panel nav a")).toHaveText([
         "01Projects",
         "02Practice",
@@ -773,9 +700,21 @@ test.describe("Maison Form interactions", () => {
         await expect(page.locator(".mf-menu-art")).toBeHidden();
       }
 
+      const menuLinks = page.locator('.mf-menu-overlay a[href]');
+      await menuLinks.last().focus();
+      await page.keyboard.press("Tab");
+      await expect(menuLinks.first()).toBeFocused();
+      await page.keyboard.press("Shift+Tab");
+      await expect(menuLinks.last()).toBeFocused();
+
       await page.keyboard.press("Escape");
       await expect(trigger).toHaveAttribute("aria-expanded", "false");
+      await expect(trigger).toBeFocused();
       expect(await page.evaluate(() => document.body.style.overflow)).toBe("");
+      await expect(page.locator(".mf-main")).not.toHaveAttribute("inert", "");
+      await expect(page.locator(".mf-main")).not.toHaveAttribute("aria-hidden", "true");
+      await expect(page.locator(".mf-footer")).not.toHaveAttribute("inert", "");
+      await expect(page.locator(".mf-footer")).not.toHaveAttribute("aria-hidden", "true");
       await expectNoRuntimeFailures(page, failures);
     });
   }
@@ -794,22 +733,50 @@ test.describe("Maison Form interactions", () => {
     await expectNoRuntimeFailures(page, failures);
   });
 
-  test("project filters expose canonical counts and empty state", async ({ page }) => {
+  test("editorial Project Index keeps every project permanently visible", async ({ page }) => {
     const failures = await visit(page, `${base}/projects`);
+    await expect(page.getByRole("heading", { name: "A catalogue of places, held in view." })).toBeVisible();
+    await expect(page.locator(".mf-project-index-list li")).toHaveText([
+      /01\s*All\s*05/,
+      /02\s*Residential\s*04/,
+      /03\s*Hospitality\s*01/,
+      /04\s*Objects\s*00/,
+    ]);
+    await expect(page.locator(".mf-project-index-list button")).toHaveCount(0);
     await expect(page.locator(".mf-project-tile")).toHaveCount(5);
+    await expect(page.locator(".mf-project-meta strong")).toHaveText([
+      "Maison Rivoli",
+      "Casa Levante",
+      "Belgravia Library",
+      "Casa Brera",
+      "Dar Atlas",
+    ]);
+    await expectNoRuntimeFailures(page, failures);
+  });
 
-    await page.getByRole("button", { name: "Residential" }).click();
-    await expect(page.getByRole("button", { name: "Residential" })).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator(".mf-project-tile")).toHaveCount(4);
+  test("Maison typography uses the restored Geist variable stack", async ({ page }) => {
+    const failures = await visit(page, base);
+    const fontState = await page.locator(".mf-site").evaluate((node) => {
+      const styles = getComputedStyle(node);
+      return {
+        mfSans: styles.getPropertyValue("--mf-sans").trim(),
+        geistVariable: styles.getPropertyValue("--font-geist-sans").trim(),
+        computedFamily: styles.fontFamily,
+      };
+    });
 
-    await page.getByRole("button", { name: "Hospitality" }).click();
-    await expect(page.locator(".mf-project-tile")).toHaveCount(1);
+    expect(fontState.mfSans).toContain("Geist");
+    expect(fontState.mfSans).toContain("Arial");
+    expect(fontState.geistVariable.length).toBeGreaterThan(0);
+    expect(fontState.geistVariable).toContain("Geist");
+    expect(fontState.computedFamily).not.toBe("Arial, sans-serif");
+    await expectNoRuntimeFailures(page, failures);
+  });
 
-    await page.getByRole("button", { name: "Objects" }).click();
-    await expect(page.locator(".mf-project-tile")).toHaveCount(0);
-    await expect(page.locator(".mf-project-empty")).toHaveText(
-      "Objects are presented privately. Please enquire for the current collection.",
-    );
+  test("Private Enquiries remains the contact page H1", async ({ page }) => {
+    const failures = await visit(page, `${base}/contact`);
+    await expect(page.getByRole("heading", { level: 1, name: "Private Enquiries" })).toBeVisible();
+    await expect(page.locator(".mf-page-intro")).toContainText("Begin a conversation.");
     await expectNoRuntimeFailures(page, failures);
   });
 
@@ -841,22 +808,49 @@ test.describe("Maison Form interactions", () => {
     await expect(page.locator('[role="status"]')).toContainText("Enquiry noted");
     await expect(page.locator('[role="status"]')).toContainText("Thank you.");
     await expect(page).toHaveURL(new RegExp(`${base}/contact$`));
+    await expect(page.getByRole("button", { name: /return to form/i })).toBeFocused();
     expect(postRequests).toEqual([]);
 
     await page.getByRole("button", { name: /return to form/i }).click();
     await expect(page.locator(".mf-enquiry-form")).toBeVisible();
+    await expect(page.getByLabel("Your name *")).toBeFocused();
     await expectNoRuntimeFailures(page, failures);
   });
 
   test("reduced motion resolves animations immediately", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     const failures = await visit(page, base);
-    const heroDuration = await page
-      .locator(".mf-home-hero > .mf-image img")
-      .evaluate((node) => getComputedStyle(node).animationDuration);
-    const reelDuration = await page.locator(".mf-reel-track").evaluate((node) => getComputedStyle(node).animationDuration);
-    expect(Number.parseFloat(heroDuration)).toBeLessThanOrEqual(0.001);
-    expect(Number.parseFloat(reelDuration)).toBeLessThanOrEqual(0.001);
+    const heroMotion = await page.locator(".mf-home-hero > .mf-image img").evaluate((node) => {
+      const styles = getComputedStyle(node);
+      return {
+        animationName: styles.animationName,
+        animationDuration: styles.animationDuration,
+        opacity: styles.opacity,
+        transform: styles.transform,
+      };
+    });
+    const reelMotion = await page.locator(".mf-reel-track").evaluate((node) => {
+      const styles = getComputedStyle(node);
+      return {
+        animationName: styles.animationName,
+        animationDuration: styles.animationDuration,
+        transform: styles.transform,
+        willChange: styles.willChange,
+      };
+    });
+
+    expect(heroMotion).toMatchObject({
+      animationName: "none",
+      animationDuration: "0s",
+      opacity: "1",
+      transform: "none",
+    });
+    expect(reelMotion).toMatchObject({
+      animationName: "none",
+      animationDuration: "0s",
+      transform: "none",
+      willChange: "auto",
+    });
     await expectNoRuntimeFailures(page, failures);
   });
 });
