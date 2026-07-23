@@ -9,6 +9,10 @@ type ProjectFilter = "All" | MaisonProjectType;
 
 const filters: ProjectFilter[] = ["All", "Residential", "Hospitality", "Objects"];
 
+function projectCount(filter: ProjectFilter) {
+  return filter === "All" ? projects.length : projects.filter((project) => project.type === filter).length;
+}
+
 export default function MaisonProjectLibrary() {
   const [activeFilter, setActiveFilter] = useState<ProjectFilter>("All");
   const visibleProjects = useMemo(() => {
@@ -18,20 +22,27 @@ export default function MaisonProjectLibrary() {
 
   return (
     <>
-      <div className="mf-filter-bar" role="group" aria-label="Project category filters">
-        <span>View</span>
-        {filters.map((filter) => (
-          <button
-            key={filter}
-            type="button"
-            aria-pressed={activeFilter === filter}
-            className={activeFilter === filter ? "is-active" : ""}
-            onClick={() => setActiveFilter(filter)}
-          >
-            {filter}
-          </button>
-        ))}
-      </div>
+      <section className="mf-project-index" aria-labelledby="mf-project-index-title">
+        <div>
+          <p className="mf-eyebrow">Project index</p>
+          <h2 id="mf-project-index-title">A catalogue of places, held in view.</h2>
+        </div>
+        <div className="mf-project-index-controls" role="group" aria-label="Project index categories">
+          {filters.map((filter, index) => (
+            <button
+              key={filter}
+              type="button"
+              aria-pressed={activeFilter === filter}
+              className={activeFilter === filter ? "is-active" : ""}
+              onClick={() => setActiveFilter(filter)}
+            >
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <strong>{filter}</strong>
+              <small>{String(projectCount(filter)).padStart(2, "0")}</small>
+            </button>
+          ))}
+        </div>
+      </section>
       <section
         className="mf-project-library"
         aria-label={`${activeFilter} project results`}

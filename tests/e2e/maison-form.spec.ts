@@ -759,6 +759,7 @@ test.describe("Maison Form interactions", () => {
       await expect(trigger).toHaveAttribute("aria-expanded", "true");
       await expect(page.locator(".mf-menu-overlay")).toBeVisible();
       expect(await page.evaluate(() => document.body.style.overflow)).toBe("hidden");
+      await expect(page.locator(".mf-menu-panel nav a").first()).toBeFocused();
       await expect(page.locator(".mf-menu-panel nav a")).toHaveText([
         "01Projects",
         "02Practice",
@@ -773,8 +774,16 @@ test.describe("Maison Form interactions", () => {
         await expect(page.locator(".mf-menu-art")).toBeHidden();
       }
 
+      const menuLinks = page.locator('.mf-menu-overlay a[href]');
+      await menuLinks.last().focus();
+      await page.keyboard.press("Tab");
+      await expect(menuLinks.first()).toBeFocused();
+      await page.keyboard.press("Shift+Tab");
+      await expect(menuLinks.last()).toBeFocused();
+
       await page.keyboard.press("Escape");
       await expect(trigger).toHaveAttribute("aria-expanded", "false");
+      await expect(trigger).toBeFocused();
       expect(await page.evaluate(() => document.body.style.overflow)).toBe("");
       await expectNoRuntimeFailures(page, failures);
     });
@@ -794,8 +803,11 @@ test.describe("Maison Form interactions", () => {
     await expectNoRuntimeFailures(page, failures);
   });
 
-  test("project filters expose canonical counts and empty state", async ({ page }) => {
+  test("editorial Project Index exposes canonical counts and empty state", async ({ page }) => {
     const failures = await visit(page, `${base}/projects`);
+    await expect(page.getByRole("heading", { name: "A catalogue of places, held in view." })).toBeVisible();
+    await expect(page.locator(".mf-project-index-controls button")).toHaveCount(4);
+    await expect(page.getByRole("button", { name: /all/i })).toContainText("05");
     await expect(page.locator(".mf-project-tile")).toHaveCount(5);
 
     await page.getByRole("button", { name: "Residential" }).click();

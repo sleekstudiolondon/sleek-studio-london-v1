@@ -28,6 +28,7 @@ export default function MaisonEnquiryForm() {
 
   return (
     <form className="mf-enquiry-form" onSubmit={handleSubmit}>
+      <p className="mf-form-intro">Private enquiry / 01—04</p>
       <label>
         <span>Your name *</span>
         <input name="name" autoComplete="name" required />
@@ -60,6 +61,10 @@ export default function MaisonEnquiryForm() {
         <input name="consent" type="checkbox" required />
         <span>I understand this is a fictional demonstration and no enquiry will be sent.</span>
       </label>
+      <p className="mf-form-disclosure mf-field-full">
+        Demonstration only — submitting this form changes this page locally and does not send an email, request or
+        other network transmission.
+      </p>
       <button className="mf-submit" type="submit">
         Submit private enquiry ↗
       </button>

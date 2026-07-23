@@ -13,6 +13,7 @@ export default function MaisonPressPage() {
           </>
         }
         intro="A flexible editorial system for features, interviews and studio announcements. All entries below are clearly marked demonstration copy."
+        compact
       />
       <section className="mf-press-list">
         {pressRows.map((row) => (
