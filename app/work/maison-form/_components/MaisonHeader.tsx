@@ -14,6 +14,7 @@ export default function MaisonHeader() {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const isHome = pathname === MF_BASE;
+  const isActiveRoute = (href: string) => pathname === href || (href !== MF_BASE && pathname.startsWith(`${href}/`));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 32);
@@ -31,6 +32,38 @@ export default function MaisonHeader() {
     if (menuOpen) document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const targets = Array.from(document.querySelectorAll<HTMLElement>(".mf-main, .mf-footer"));
+    const previousState = targets.map((element) => ({
+      element,
+      inert: element.getAttribute("inert"),
+      ariaHidden: element.getAttribute("aria-hidden"),
+    }));
+
+    targets.forEach((element) => {
+      element.setAttribute("inert", "");
+      element.setAttribute("aria-hidden", "true");
+    });
+
+    return () => {
+      previousState.forEach(({ element, inert, ariaHidden }) => {
+        if (inert === null) {
+          element.removeAttribute("inert");
+        } else {
+          element.setAttribute("inert", inert);
+        }
+
+        if (ariaHidden === null) {
+          element.removeAttribute("aria-hidden");
+        } else {
+          element.setAttribute("aria-hidden", ariaHidden);
+        }
+      });
     };
   }, [menuOpen]);
 
@@ -94,16 +127,28 @@ export default function MaisonHeader() {
         <Link className="mf-wordmark" href={maisonRoutes.home}>
           Maison Form
         </Link>
-        <nav className="mf-primary-nav" aria-label="Maison Form primary navigation">
-          {primaryNavLinks.map((item) => (
-            <Link key={item.href} href={item.href}>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="mf-header-actions">
-          <Link className="mf-private-link" href={maisonRoutes.contact}>
-            Private enquiries
+        <div className="mf-header-rail">
+          <nav className="mf-primary-nav" aria-label="Maison Form primary navigation">
+            {primaryNavLinks.map((item) => {
+              const isActive = isActiveRoute(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={isActive ? "is-active" : undefined}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+          <Link
+            className={`mf-private-link ${isActiveRoute(maisonRoutes.contact) ? "is-active" : ""}`.trim()}
+            href={maisonRoutes.contact}
+            aria-current={isActiveRoute(maisonRoutes.contact) ? "page" : undefined}
+          >
+            Enquire
           </Link>
           <button
             ref={triggerRef}

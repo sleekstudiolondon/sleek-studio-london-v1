@@ -6,13 +6,8 @@ export default function MaisonContactPage() {
     <>
       <MaisonPageIntro
         eyebrow="Private enquiries"
-        title={
-          <>
-            <span>Begin a</span>
-            <em>conversation.</em>
-          </>
-        }
-        intro="Tell us about the place, the life it will hold and what draws you to Maison Form."
+        title="Private Enquiries"
+        intro="Begin a conversation. Tell us about the place, the life it will hold and what draws you to Maison Form."
         compact
       />
       <section className="mf-contact-layout">
