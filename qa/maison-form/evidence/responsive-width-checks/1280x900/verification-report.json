@@ -1,0 +1,58 @@
+{
+  "viewport": "1280x900",
+  "width": 1280,
+  "height": 900,
+  "mobileParityScope": "Desktop exact-width responsive verification.",
+  "routes": [
+    {
+      "route": "/work/maison-form",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/1280x900/home.jpg"
+    },
+    {
+      "route": "/work/maison-form/projects",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/1280x900/projects.jpg"
+    },
+    {
+      "route": "/work/maison-form/projects/maison-rivoli",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/1280x900/maison-rivoli.jpg"
+    },
+    {
+      "route": "/work/maison-form/practice",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/1280x900/practice.jpg"
+    },
+    {
+      "route": "/work/maison-form/about-us",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/1280x900/about-us.jpg"
+    },
+    {
+      "route": "/work/maison-form/journal",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/1280x900/journal.jpg"
+    },
+    {
+      "route": "/work/maison-form/journal/material-memory",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/1280x900/material-memory.jpg"
+    },
+    {
+      "route": "/work/maison-form/press",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/1280x900/press.jpg"
+    },
+    {
+      "route": "/work/maison-form/contact",
+      "horizontalOverflow": 0,
+      "screenshot": "qa/maison-form/evidence/responsive-width-checks/1280x900/contact.jpg"
+    }
+  ],
+  "menu": {
+    "expanded": true,
+    "artVisible": true,
+    "screenshot": "qa/maison-form/evidence/responsive-width-checks/1280x900/menu-open.jpg"
+  }
+}

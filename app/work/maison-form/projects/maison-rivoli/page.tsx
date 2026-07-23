@@ -11,8 +11,7 @@ export default function MaisonRivoliPage() {
           <span>2026</span>
         </div>
         <h1 id="mf-case-title">
-          Maison
-          <em>Rivoli</em>
+          Maison <em className="mf-inline-em">Rivoli</em>
         </h1>
         <MaisonImage asset="maison-hero.webp" alt="Maison Rivoli sunlit Paris townhouse interior." priority sizes="94vw" />
       </section>
